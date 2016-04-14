@@ -9,7 +9,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.HttpURLConnection;
+
 public class MainActivity extends AppCompatActivity {
+    String serverUrl = "localhost:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,31 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        URL url;
+        HttpURLConnection con = null;
+        try {
+            url = new URL(serverUrl + "/test");
+            con = (HttpURLConnection) url.openConnection();
+
+            InputStream in = con.getInputStream();
+            InputStreamReader reader = new InputStreamReader(in);
+
+            int data = reader.read();
+            while (data != -1) {
+                char c = (char) data;
+                System.out.println(c);
+                data = reader.read();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (con != null) {
+                con.disconnect();
+            }
+        }
     }
 
     @Override
