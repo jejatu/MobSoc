@@ -1,13 +1,19 @@
 package com.wishlist.wishlist;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +21,9 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int MY_PERMISSIONS_INT = 13;
+    TextView debugText;
+    Button debugButton;
     String serverUrl = "localhost:5000";
 
     @Override
@@ -33,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        debugText = (TextView) findViewById(R.id.debugText);
+        debugButton = (Button) findViewById(R.id.debugButton);
+
+        requestPermissions();
+
         URL url;
         HttpURLConnection con = null;
         try {
@@ -42,12 +56,15 @@ public class MainActivity extends AppCompatActivity {
             InputStream in = con.getInputStream();
             InputStreamReader reader = new InputStreamReader(in);
 
+            String response = "";
             int data = reader.read();
             while (data != -1) {
                 char c = (char) data;
-                System.out.println(c);
+                response += c;
                 data = reader.read();
             }
+            debugText.setText(response);
+
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -79,5 +96,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void requestPermissions() {
+        String[] permissions = new String[3];
+
+        permissions[0] = Manifest.permission.INTERNET;
+
+        ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_INT: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("Wishlist", "Permissions granted!");
+                }
+                else {
+                    Log.d("Wishlist", "Permissions denied...");
+                }
+                return;
+            }
+        }
     }
 }
