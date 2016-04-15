@@ -16,12 +16,16 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_INT = 13;
@@ -52,13 +56,32 @@ public class MainActivity extends AppCompatActivity {
                 HttpClient.request("GET", "test", new HttpResponse() {
                     @Override
                     public void success(String response) {
-                        debugText.setText(response);
+                        String formattedResponse = parseTestResponse(response);
+                        debugText.setText(formattedResponse);
                     }
                 });
             }
         });
 
         requestPermissions();
+    }
+
+    public String parseTestResponse(String response) {
+        String formattedResponse = "";
+        try {
+            JSONObject json = new JSONObject(response);
+            Iterator<String> iter = json.keys();
+
+            while (iter.hasNext()) {
+                String key = iter.next();
+                String value = json.getString(key);
+                formattedResponse += key + ": " + value + "\n";
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return formattedResponse;
     }
 
     @Override
