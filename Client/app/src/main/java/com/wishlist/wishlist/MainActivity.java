@@ -44,9 +44,17 @@ public class MainActivity extends AppCompatActivity {
 
         debugText = (TextView) findViewById(R.id.debugText);
         debugButton = (Button) findViewById(R.id.debugButton);
+        debugButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                testRequest();
+            }
+        });
 
         requestPermissions();
+    }
 
+    public void testRequest() {
         URL url;
         HttpURLConnection con = null;
         try {
