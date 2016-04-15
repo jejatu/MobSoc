@@ -2,6 +2,7 @@ package com.wishlist.wishlist;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_INT = 13;
     TextView debugText;
     Button debugButton;
-    String serverUrl = "localhost:5000";
+    String serverUrl = "http://10.0.2.2:5000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,31 +50,29 @@ public class MainActivity extends AppCompatActivity {
         debugButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                testRequest();
+                new TestRequest().execute();
             }
         });
 
         requestPermissions();
     }
 
-    public void testRequest() {
+    public String makeGetRequest(String subUrl) {
+        StringBuffer sb = new StringBuffer();
+
         URL url;
         HttpURLConnection con = null;
         try {
-            url = new URL(serverUrl + "/test");
+            url = new URL(serverUrl + subUrl);
             con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
-            InputStream in = con.getInputStream();
-            InputStreamReader reader = new InputStreamReader(in);
-
-            String response = "";
-            int data = reader.read();
-            while (data != -1) {
-                char c = (char) data;
-                response += c;
-                data = reader.read();
+            InputStream is = new BufferedInputStream(con.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String inputLine = "";
+            while ((inputLine = br.readLine()) != null) {
+                sb.append(inputLine);
             }
-            debugText.setText(response);
 
         }
         catch (Exception e) {
@@ -82,6 +83,26 @@ public class MainActivity extends AppCompatActivity {
                 con.disconnect();
             }
         }
+
+        return sb.toString();
+    }
+
+    private class TestRequest extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return makeGetRequest("test");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            debugText.setText(result);
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 
     @Override
@@ -107,23 +128,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermissions() {
-        String[] permissions = new String[3];
+        String[] permissions = new String[2];
 
         permissions[0] = Manifest.permission.INTERNET;
+        permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
 
         ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_INT: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("Wishlist", "Permissions granted!");
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Wishlist", "Permission " + i + " granted!");
+                    }
+                    else {
+                        Log.d("Wishlist", "Permission " + i + " denied...");
+                    }
                 }
-                else {
-                    Log.d("Wishlist", "Permissions denied...");
-                }
-                return;
             }
         }
     }
