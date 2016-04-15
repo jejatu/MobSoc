@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_INT = 13;
     TextView debugText;
     Button debugButton;
-    String serverUrl = "http://10.0.2.2:5000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,59 +49,16 @@ public class MainActivity extends AppCompatActivity {
         debugButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new TestRequest().execute();
+                HttpClient.request("GET", "test", new HttpResponse() {
+                    @Override
+                    public void success(String response) {
+                        debugText.setText(response);
+                    }
+                });
             }
         });
 
         requestPermissions();
-    }
-
-    public String makeGetRequest(String subUrl) {
-        StringBuffer sb = new StringBuffer();
-
-        URL url;
-        HttpURLConnection con = null;
-        try {
-            url = new URL(serverUrl + subUrl);
-            con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-            InputStream is = new BufferedInputStream(con.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String inputLine = "";
-            while ((inputLine = br.readLine()) != null) {
-                sb.append(inputLine);
-            }
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (con != null) {
-                con.disconnect();
-            }
-        }
-
-        return sb.toString();
-    }
-
-    private class TestRequest extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return makeGetRequest("test");
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            debugText.setText(result);
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
     }
 
     @Override
