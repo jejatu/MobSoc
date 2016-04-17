@@ -1,4 +1,11 @@
 <resources>
-    <string name="app_name">Wishlist</string>
+    <string name="app_name">Shop it baby</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_create_family_group">CreateFamilyGroup</string>
+    <string name="title_activity_join_family_group">JoinFamilyGroup</string>
+    <string name="title_activity_shopping_list">ShoppingList</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_add_product">AddProduct</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
