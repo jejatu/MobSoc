@@ -3,7 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true"
-    android:background="#00ccff">
+    android:background="#00ccff"
+    >
 
     <LinearLayout
         android:orientation="vertical"
@@ -11,7 +12,9 @@
         android:layout_height="wrap_content"
         android:paddingTop="56dp"
         android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:paddingRight="24dp"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <ImageView android:src="@drawable/logo"
             android:layout_width="wrap_content"

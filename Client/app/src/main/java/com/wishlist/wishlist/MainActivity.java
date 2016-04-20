@@ -20,12 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -139,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(getArguments().getInt(ARG_SECTION_NUMBER)==1){
 
-                FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab1);
+                FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -149,8 +151,17 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 rootView=inflater.inflate(R.layout.fragment_main, container, false);
-                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+                //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+                //List view work below
+                ListView listView=(ListView)rootView.findViewById(R.id.product_listview);
+                List<Product> productList= Product.productDummyData();
+                //Log.d("List size and name", productList.size() + " name = "+ productList.get(2).getProductName() );
+                listView.setAdapter(new ProducrListAdaptor(Product.productDummyData()));
+
+                //end list view work
+
 
                 debugText = (TextView) rootView.findViewById(R.id.debugText);
                 debugButton = (Button) rootView.findViewById(R.id.debugButton);
