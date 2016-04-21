@@ -162,22 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
                 //end list view work
 
-
-                debugText = (TextView) rootView.findViewById(R.id.debugText);
-                debugButton = (Button) rootView.findViewById(R.id.debugButton);
-                debugButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        HttpClient.request("GET", "test", new HttpResponse() {
-                            @Override
-                            public void success(String response) {
-                                String formattedResponse = parseTestResponse(response);
-                                debugText.setText(formattedResponse);
-                            }
-                        });
-                    }
-                });
-
                 requestPermissions();
 
 

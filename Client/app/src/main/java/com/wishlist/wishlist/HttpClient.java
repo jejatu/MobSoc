@@ -2,29 +2,49 @@ package com.wishlist.wishlist;
 
 import android.os.AsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpClient {
     static String serverUrl = "http://10.0.2.2:5000/";
 
-    public static void request(String type, String subUrl, HttpResponse responseCallback) {
-        new HttpRequestTask(responseCallback).execute(type, subUrl);
+    public static void sendGetRequest(String subUrl, HttpCallback responseCallback) {
+        new HttpRequestTask(responseCallback).execute("GET", subUrl, "");
     }
 
-    private static String makeRequest(String type, String subUrl) {
+    public static void sendPostRequest(String subUrl, JSONObject data, HttpCallback responseCallback) {
+        new HttpRequestTask(responseCallback).execute("POST", subUrl, data.toString());
+    }
+
+    private static HttpResponse makeRequest(String type, String subUrl, String data) {
         StringBuffer sb = new StringBuffer();
+        int statusCode = 0;
 
         URL url;
         HttpURLConnection con = null;
         try {
             url = new URL(serverUrl + subUrl);
             con = (HttpURLConnection) url.openConnection();
+            con.setConnectTimeout(1000);
             con.setRequestMethod(type);
+            con.setDoInput(true);
+            con.setRequestProperty("Content-Type", "application/json");
+
+            if (!data.isEmpty()) {
+                con.setDoOutput(true);
+                OutputStream os = con.getOutputStream();
+                os.write(data.getBytes("UTF-8"));
+                os.close();
+            }
 
             InputStream is = new BufferedInputStream(con.getInputStream());
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -32,7 +52,9 @@ public class HttpClient {
             while ((inputLine = br.readLine()) != null) {
                 sb.append(inputLine);
             }
+            is.close();
 
+            statusCode = con.getResponseCode();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -43,26 +65,38 @@ public class HttpClient {
             }
         }
 
-        return sb.toString();
+        return new HttpResponse(statusCode, sb.toString());
     }
 
-    private static class HttpRequestTask extends AsyncTask<String, Void, String> {
-        public HttpResponse delegate = null;
+    private static class HttpRequestTask extends AsyncTask<String, Void, HttpResponse> {
+        public HttpCallback delegate = null;
 
-        public HttpRequestTask(HttpResponse response) {
+        public HttpRequestTask(HttpCallback response) {
             delegate = response;
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected HttpResponse doInBackground(String... params) {
             if (params.length > 0)
-                return makeRequest(params[0], params[1]);
-            return "";
+                return makeRequest(params[0], params[1], params[2]);
+            return new HttpResponse(500);
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            delegate.success(result);
+        protected void onPostExecute(HttpResponse result) {
+            JSONObject json = new JSONObject();
+            try {
+                json = new JSONObject(result.data);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (result.status >= 200 && result.status < 300) {
+                delegate.success(json);
+            }
+            else {
+                delegate.failure(json);
+            }
         }
 
         @Override

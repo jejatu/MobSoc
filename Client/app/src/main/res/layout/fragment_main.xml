@@ -17,13 +17,7 @@
     android:gravity="top">
 
 
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Press this!"
-        android:id="@+id/debugButton" />
-    <ListView
+        <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/product_listview" />

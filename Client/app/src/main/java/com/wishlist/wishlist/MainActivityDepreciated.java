@@ -52,20 +52,6 @@ public class MainActivityDepreciated extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-        debugText = (TextView) findViewById(R.id.debugText);
-        debugButton = (Button) findViewById(R.id.debugButton);
-        debugButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                HttpClient.request("GET", "test", new HttpResponse() {
-                    @Override
-                    public void success(String response) {
-                        String formattedResponse = parseTestResponse(response);
-                        debugText.setText(formattedResponse);
-                    }
-                });
-            }
-        });
 
         requestPermissions();
 

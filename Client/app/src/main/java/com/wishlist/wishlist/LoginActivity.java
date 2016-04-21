@@ -1,13 +1,20 @@
 package com.wishlist.wishlist;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,18 +32,46 @@ public class LoginActivity extends AppCompatActivity {
             }
         });*/
     }
-    public void createfamilygroup(View view){
-        Intent intent=new Intent(this, CreateFamilyGroup.class);
-        startActivity(intent);
-    }
-    public void joinfamilygroup(View view){
-        Intent intent=new Intent(this, JoinFamilyGroup.class);
-        startActivity(intent);
-    }
-    public void login(View view){
-        Intent intent=new Intent(this, MainActivity.class);
-        startActivity(intent);
 
+    public void createfamilygroup(View view){
+        intent = new Intent(this, CreateFamilyGroup.class);
+        startActivity(intent);
+    }
+
+    public void joinfamilygroup(View view){
+        intent = new Intent(this, JoinFamilyGroup.class);
+        startActivity(intent);
+    }
+
+    public void addTokenToSharedPreferences(String token) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("token", token);
+        editor.commit();
+    }
+
+    public void login(View view){
+        intent = new Intent(this, MainActivity.class);
+
+        EditText input_username = (EditText) findViewById(R.id.input_username);
+        EditText input_password = (EditText) findViewById(R.id.input_password);
+        String name = input_username.getText().toString();
+        String password = input_password.getText().toString();
+
+        HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, password), new HttpCallback() {
+            @Override
+            public void success(JSONObject response) {
+                String token = JSONHelper.parseToken(response);
+                addTokenToSharedPreferences(token);
+                Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+            @Override
+            public void failure(JSONObject response) {
+                Toast.makeText(getApplicationContext(), "Login failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
