@@ -1,4 +1,5 @@
 import os, sqlite3
+from datetime import datetime
 
 DEFAULT_DB_PATH = "db/db.db"
 DEFAULT_DB_SCHEMA = "db/schema.sql"
@@ -72,6 +73,15 @@ class Engine():
 
         return {"data": results, "id": cur.lastrowid}
 
+    def parse_families(self, results):
+        families = []
+        for result in results:
+            family = {}
+            family["family_id"] = str(result[0])
+            family["name"] = result[1]
+            families.append(family)
+        return families
+
     def parse_users(self, results):
         users = []
         for result in results:
@@ -85,6 +95,29 @@ class Engine():
             users.append(user)
         return users
 
+    def parse_session(self, results):
+        sessions = []
+        for result in results:
+            session = {}
+            session["token"] = result[0]
+            session["user_id"] = str(result[1])
+            session["add_date"] = result[2]
+            sessions.append(session)
+        return sessions
+
+    def parse_products(self, results):
+        products = []
+        for result in results:
+            product = {}
+            product["product_id"] = str(result[0])
+            product["name"] = result[1]
+            product["description"] = result[2]
+            product["add_date"] = result[3]
+            product["image_url"] = result[4]
+            product["family_id"] = str(result[5])
+            products.append(product)
+        return products
+
     def get_user(self, name):
         results = self.execute_sql("SELECT * FROM users WHERE name=?", (name,))["data"]
 
@@ -92,6 +125,20 @@ class Engine():
             return None
 
         return self.parse_users(results)[0]
+
+    def get_products(self, token):
+        results = self.execute_sql("SELECT * FROM products WHERE family_id = \
+                                    (SELECT family_id FROM user_families WHERE user_id = \
+                                    (SELECT user_id FROM sessions WHERE token = ?))", (token,))["data"]
+        return self.parse_products(results)
+
+    def add_session(self, user_id, token):
+        date = str(datetime.now())
+        session_id = self.execute_sql("INSERT INTO sessions VALUES(?, ?, ?)", (token, user_id, date))["id"]
+        return session_id
+
+    def remove_session(self, token):
+        self.execute_sql("DELETE FROM sessions WHERE token=?", (token,))
 
     def add_admin(self, name, email, password, family_name):
         try:

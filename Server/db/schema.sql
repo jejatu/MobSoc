@@ -11,6 +11,15 @@ CREATE TABLE IF NOT EXISTS users(
   UNIQUE(name)
 );
 
+CREATE TABLE IF NOT EXISTS sessions(
+  token TEXT PRIMARY KEY,
+  user_id INTEGER,
+  add_date TEXT,
+  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  UNIQUE(token),
+  UNIQUE(user_id)
+);
+
 CREATE TABLE IF NOT EXISTS families(
  family_id INTEGER PRIMARY KEY AUTOINCREMENT,
  family_name TEXT,
@@ -22,7 +31,8 @@ CREATE TABLE IF NOT EXISTS user_families(
   user_id INTEGER,
   FOREIGN KEY(family_id) REFERENCES families(family_id) ON DELETE CASCADE,
   FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  UNIQUE(family_id, user_id));
+  PRIMARY KEY(family_id, user_id)
+);
 
 CREATE TABLE IF NOT EXISTS products(
   product_id INTEGER PRIMARY KEY AUTOINCREMENT,
