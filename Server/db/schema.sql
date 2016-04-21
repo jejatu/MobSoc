@@ -2,18 +2,19 @@ PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS users(
   user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nickname TEXT,
+  name TEXT,
   email TEXT,
   password TEXT,
   role INTEGER,
   status INTEGER,
-  UNIQUE(user_id, nickname)
+  UNIQUE(user_id),
+  UNIQUE(name)
 );
 
 CREATE TABLE IF NOT EXISTS families(
  family_id INTEGER PRIMARY KEY AUTOINCREMENT,
  family_name TEXT,
- UNIQUE(family_id)
+ UNIQUE(family_id, family_name)
 );
 
 CREATE TABLE IF NOT EXISTS user_families(

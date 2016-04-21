@@ -70,4 +70,48 @@ class Engine():
         con.commit()
         con.close()
 
-        return results, cur.lastrowid
+        return {"data": results, "id": cur.lastrowid}
+
+    def parse_users(self, results):
+        users = []
+        for result in results:
+            user = {}
+            user["user_id"] = str(result[0])
+            user["name"] = result[1]
+            user["email"] = result[2]
+            user["password"] = result[3]
+            user["role"] = str(result[4])
+            user["status"] = str(result[5])
+            users.append(user)
+        return users
+
+    def get_user(self, name):
+        results = self.execute_sql("SELECT * FROM users WHERE name=?", (name,))["data"]
+
+        if len(results) == 0:
+            return None
+
+        return self.parse_users(results)[0]
+
+    def add_admin(self, name, email, password, family_name):
+        try:
+            family_data = self.execute_sql("SELECT * FROM families WHERE family_name=?", (family_name,))["data"]
+            if len(family_data) != 0:
+                return None
+            family_id = self.execute_sql("INSERT INTO families VALUES(NULL, ?)", (family_name,))["id"]
+            user_id = self.execute_sql("INSERT INTO users VALUES(NULL, ?, ?, ?, 0, 0)", (name, email, password))["id"]
+            self.execute_sql("INSERT INTO user_families VALUES(?, ?)", (family_id, user_id))
+        except:
+            return None
+        return user_id
+
+    def add_member(self, name, password, family_name):
+        try:
+            family_id = self.execute_sql("SELECT * FROM families WHERE family_name=?", (family_name,))["id"]
+            if family_id == 0:
+                return None
+            user_id = self.execute_sql("INSERT INTO users VALUES(NULL, ?, NULL, ?, 1, 0)", (name, password))["id"]
+            self.execute_sql("INSERT INTO user_families VALUES(?, ?)", (family_id, user_id))
+        except:
+            return None
+        return user_id
