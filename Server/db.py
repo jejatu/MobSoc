@@ -109,12 +109,11 @@ class Engine():
         products = []
         for result in results:
             product = {}
-            product["product_id"] = str(result[0])
             product["name"] = result[1]
             product["description"] = result[2]
-            product["add_date"] = result[3]
-            product["image_url"] = result[4]
-            product["family_id"] = str(result[5])
+            product["adder"] = result[3]
+            product["add_date"] = result[4]
+            product["image_url"] = result[5]
             products.append(product)
         return products
 

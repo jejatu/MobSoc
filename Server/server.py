@@ -98,7 +98,10 @@ def products():
 
     products = engine.get_products(token)
 
-    return json.dumps(products), 200
+    envelope = {}
+    envelope["products"] = products;
+
+    return json.dumps(envelope), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

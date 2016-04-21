@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS products(
   product_id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT,
   description TEXT,
+  adder TEXT,
   add_date TEXT,
   image_url TEXT,
   family_id INTEGER,
