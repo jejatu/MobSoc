@@ -19,9 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
     //public static int tabNumber=1;
 
     public static final int MY_PERMISSIONS_INT = 13;
-    public static TextView debugText;
-    public static Button debugButton;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -55,11 +51,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -158,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 ListView listView=(ListView)rootView.findViewById(R.id.product_listview);
                 List<Product> productList= Product.productDummyData();
                 //Log.d("List size and name", productList.size() + " name = "+ productList.get(2).getProductName() );
-                listView.setAdapter(new ProducrListAdaptor(Product.productDummyData()));
+                listView.setAdapter(new ProductListAdaptor(Product.productDummyData()));
 
                 //end list view work
 

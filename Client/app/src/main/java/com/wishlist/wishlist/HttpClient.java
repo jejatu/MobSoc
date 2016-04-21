@@ -16,6 +16,7 @@ import java.net.URL;
 
 public class HttpClient {
     static String serverUrl = "http://10.0.2.2:5000/";
+    static int timeout = 1000;
 
     public static void sendGetRequest(String subUrl, HttpCallback responseCallback) {
         new HttpRequestTask(responseCallback).execute("GET", subUrl, "");
@@ -34,7 +35,7 @@ public class HttpClient {
         try {
             url = new URL(serverUrl + subUrl);
             con = (HttpURLConnection) url.openConnection();
-            con.setConnectTimeout(1000);
+            con.setConnectTimeout(timeout);
             con.setRequestMethod(type);
             con.setDoInput(true);
             con.setRequestProperty("Content-Type", "application/json");
