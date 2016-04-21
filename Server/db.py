@@ -133,9 +133,15 @@ class Engine():
         return self.parse_products(results)
 
     def add_session(self, user_id, token):
+        self.execute_sql("DELETE FROM sessions WHERE user_id=?", (user_id,))
+
         date = str(datetime.now())
-        session_id = self.execute_sql("INSERT INTO sessions VALUES(?, ?, ?)", (token, user_id, date))["id"]
-        return session_id
+        results = self.execute_sql("INSERT INTO sessions VALUES(?, ?, ?)", (token, user_id, date))
+
+        if not results:
+            return None
+
+        return results["id"]
 
     def remove_session(self, token):
         self.execute_sql("DELETE FROM sessions WHERE token=?", (token,))
