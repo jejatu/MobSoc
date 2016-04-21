@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     //public static int tabNumber=1;
 
-    public static final int MY_PERMISSIONS_INT = 13;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        ListView listView;
 
         public PlaceholderFragment() {
         }
@@ -146,14 +147,25 @@ public class MainActivity extends AppCompatActivity {
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
                 //List view work below
-                ListView listView=(ListView)rootView.findViewById(R.id.product_listview);
-                List<Product> productList= Product.productDummyData();
+                listView = (ListView)rootView.findViewById(R.id.product_listview);
                 //Log.d("List size and name", productList.size() + " name = "+ productList.get(2).getProductName() );
-                listView.setAdapter(new ProductListAdaptor(Product.productDummyData()));
+
+                String token = AuthHelper.getAuthToken(getContext());
+
+                HttpClient.sendGetRequest("products?token=" + token, new HttpCallback() {
+                    @Override
+                    public void success(JSONObject response) {
+                        List<Product> productList = JSONHelper.parseProducts(response);
+                        listView.setAdapter(new ProductListAdaptor(productList));
+                    }
+
+                    @Override
+                    public void failure(JSONObject response) {
+                        listView.setAdapter(new ProductListAdaptor(Product.productDummyData()));
+                    }
+                });
 
                 //end list view work
-
-                requestPermissions();
 
 
 
@@ -168,48 +180,6 @@ public class MainActivity extends AppCompatActivity {
 
 
             return rootView;
-        }
-
-        public static String parseTestResponse(String response) {
-            String formattedResponse = "";
-            try {
-                JSONObject json = new JSONObject(response);
-                Iterator<String> iter = json.keys();
-
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    String value = json.getString(key);
-                    formattedResponse += key + ": " + value + "\n";
-                }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return formattedResponse;
-        }
-        private void requestPermissions() {
-            String[] permissions = new String[2];
-
-            permissions[0] = Manifest.permission.INTERNET;
-            permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
-
-            ActivityCompat.requestPermissions(getActivity() , permissions, MY_PERMISSIONS_INT);
-        }
-
-        @Override
-        public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-            switch (requestCode) {
-                case MY_PERMISSIONS_INT: {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                            Log.d("Wishlist", "Permission " + i + " granted!");
-                        }
-                        else {
-                            Log.d("Wishlist", "Permission " + i + " denied...");
-                        }
-                    }
-                }
-            }
         }
 
     }

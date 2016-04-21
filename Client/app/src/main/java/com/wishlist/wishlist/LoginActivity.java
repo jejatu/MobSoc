@@ -1,10 +1,14 @@
 package com.wishlist.wishlist;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +18,8 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
+    public static final int MY_PERMISSIONS_INT = 13;
+
     Intent intent;
 
     @Override
@@ -31,6 +37,33 @@ public class LoginActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+
+        requestPermissions();
+    }
+
+    private void requestPermissions() {
+        String[] permissions = new String[2];
+
+        permissions[0] = Manifest.permission.INTERNET;
+        permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
+
+        ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_INT: {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Wishlist", "Permission " + i + " granted!");
+                    }
+                    else {
+                        Log.d("Wishlist", "Permission " + i + " denied...");
+                    }
+                }
+            }
+        }
     }
 
     public void createfamilygroup(View view){
@@ -41,13 +74,6 @@ public class LoginActivity extends AppCompatActivity {
     public void joinfamilygroup(View view){
         intent = new Intent(this, JoinFamilyGroup.class);
         startActivity(intent);
-    }
-
-    public void addTokenToSharedPreferences(String token) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("token", token);
-        editor.commit();
     }
 
     public void login(View view){
@@ -62,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void success(JSONObject response) {
                 String token = JSONHelper.parseToken(response);
-                addTokenToSharedPreferences(token);
+                AuthHelper.saveAuthToken(token, getApplicationContext());
                 Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
