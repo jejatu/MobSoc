@@ -1,8 +1,11 @@
 package com.wishlist.wishlist;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -20,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_INT = 13;
     public static TextView debugText;
     public static Button debugButton;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -87,6 +94,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void dispatchTakePictureIntent(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            ImageView mImageView=(ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
+            mImageView.setImageBitmap(imageBitmap);
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -121,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         public PlaceholderFragment() {
         }
+
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -163,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                 //end list view work
 
 
-                debugText = (TextView) rootView.findViewById(R.id.debugText);
+               /* debugText = (TextView) rootView.findViewById(R.id.debugText);
                 debugButton = (Button) rootView.findViewById(R.id.debugButton);
                 debugButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -178,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                requestPermissions();
+                requestPermissions();*/
 
 
 

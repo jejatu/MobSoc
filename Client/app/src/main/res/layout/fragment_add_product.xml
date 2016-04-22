@@ -72,6 +72,24 @@
         android:textSize="14sp" />
 
 
+    <com.makeramen.roundedimageview.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/thumbnailImageViewAddProduct"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+
+        android:scaleType="fitCenter"
+        android:layout_alignParentRight="true"
+        app:riv_corner_radius="30dip"
+        app:riv_border_width="2dip"
+        app:riv_border_color="#00ccff"
+        app:riv_mutate_background="true"
+        app:riv_tile_mode="repeat"
+        app:riv_oval="false"
+        />
 
 
 </LinearLayout>
@@ -91,6 +109,7 @@
             android:background="#ffffff"
             android:layout_marginBottom="40dp"
             app:backgroundTint="#00ccff"
+            android:onClick="dispatchTakePictureIntent"
             android:adjustViewBounds="false" />
     </RelativeLayout>
 

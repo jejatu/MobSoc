@@ -40,6 +40,9 @@ public class Product {
         Product product4=new Product("Pizza", "No food today", "Daddy", date, true);
         Product product5=new Product("Cornfloor", "for chips", "Mommy", date, true);
         Product product6=new Product("bulb", "200w", "Mikka", date, true);
+        Product product7=new Product("yougurt", "2kg", "Mikka", date, true);
+        Product product8=new Product("tissue", "8kpl", "Antti", date, true);
+
         productList.add(product);
         productList.add(product1);
         productList.add(product2);
@@ -47,6 +50,8 @@ public class Product {
         productList.add(product4);
         productList.add(product5);
         productList.add(product6);
+        productList.add(product7);
+        productList.add(product8);
         return productList;
     }
 
