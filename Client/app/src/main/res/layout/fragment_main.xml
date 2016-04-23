@@ -17,13 +17,7 @@
     android:gravity="top">
 
 
-
-    <!--<Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Press this!"
-        android:id="@+id/debugButton" />-->
-    <ListView
+        <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/product_listview" />
@@ -45,7 +39,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_add_circle_24dp"
-            android:onClick=""
+            android:layout_marginBottom="40dp"
             android:background="#ffffff"
             app:backgroundTint="#00ccff" />
     </RelativeLayout>

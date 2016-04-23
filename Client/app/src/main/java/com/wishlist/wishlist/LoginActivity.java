@@ -1,13 +1,26 @@
 package com.wishlist.wishlist;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
+    public static final int MY_PERMISSIONS_INT = 13;
+
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,19 +37,67 @@ public class LoginActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-    }
-    public void createfamilygroup(View view){
-        Intent intent=new Intent(this, CreateFamilyGroup.class);
-        startActivity(intent);
-    }
-    public void joinfamilygroup(View view){
-        Intent intent=new Intent(this, JoinFamilyGroup.class);
-        startActivity(intent);
-    }
-    public void login(View view){
-        Intent intent=new Intent(this, MainActivity.class);
-        startActivity(intent);
 
+        requestPermissions();
+    }
+
+    private void requestPermissions() {
+        String[] permissions = new String[2];
+
+        permissions[0] = Manifest.permission.INTERNET;
+        permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
+
+        ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_INT: {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Wishlist", "Permission " + i + " granted!");
+                    }
+                    else {
+                        Log.d("Wishlist", "Permission " + i + " denied...");
+                    }
+                }
+            }
+        }
+    }
+
+    public void createfamilygroup(View view){
+        intent = new Intent(this, CreateFamilyGroup.class);
+        startActivity(intent);
+    }
+
+    public void joinfamilygroup(View view){
+        intent = new Intent(this, JoinFamilyGroup.class);
+        startActivity(intent);
+    }
+
+    public void login(View view){
+        intent = new Intent(this, MainActivity.class);
+
+        EditText input_username = (EditText) findViewById(R.id.input_username);
+        EditText input_password = (EditText) findViewById(R.id.input_password);
+        String name = input_username.getText().toString();
+        String password = input_password.getText().toString();
+
+        HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, password), new HttpCallback() {
+            @Override
+            public void success(JSONObject response) {
+                String token = JSONHelper.parseToken(response);
+                AuthHelper.saveAuthToken(token, getApplicationContext());
+                Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+            @Override
+            public void failure(JSONObject response) {
+                Toast.makeText(getApplicationContext(), "Login failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

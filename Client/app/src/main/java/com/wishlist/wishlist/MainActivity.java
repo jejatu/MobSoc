@@ -1,11 +1,8 @@
 package com.wishlist.wishlist;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -22,10 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,12 +31,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     //public static int tabNumber=1;
-
-    public static final int MY_PERMISSIONS_INT = 13;
-    public static TextView debugText;
-    public static Button debugButton;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -62,11 +51,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,21 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void dispatchTakePictureIntent(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView mImageView=(ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
-            mImageView.setImageBitmap(imageBitmap);
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -140,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        ListView listView;
 
         public PlaceholderFragment() {
         }
-
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -178,30 +147,25 @@ public class MainActivity extends AppCompatActivity {
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
                 //List view work below
-                ListView listView=(ListView)rootView.findViewById(R.id.product_listview);
-                List<Product> productList= Product.productDummyData();
+                listView = (ListView)rootView.findViewById(R.id.product_listview);
                 //Log.d("List size and name", productList.size() + " name = "+ productList.get(2).getProductName() );
-                listView.setAdapter(new ProducrListAdaptor(Product.productDummyData()));
 
-                //end list view work
+                String token = AuthHelper.getAuthToken(getContext());
 
-
-               /* debugText = (TextView) rootView.findViewById(R.id.debugText);
-                debugButton = (Button) rootView.findViewById(R.id.debugButton);
-                debugButton.setOnClickListener(new View.OnClickListener() {
+                HttpClient.sendGetRequest("products?token=" + token, new HttpCallback() {
                     @Override
-                    public void onClick(View view) {
-                        HttpClient.request("GET", "test", new HttpResponse() {
-                            @Override
-                            public void success(String response) {
-                                String formattedResponse = parseTestResponse(response);
-                                debugText.setText(formattedResponse);
-                            }
-                        });
+                    public void success(JSONObject response) {
+                        List<Product> productList = JSONHelper.parseProducts(response);
+                        listView.setAdapter(new ProductListAdaptor(productList));
+                    }
+
+                    @Override
+                    public void failure(JSONObject response) {
+                        listView.setAdapter(new ProductListAdaptor(Product.productDummyData()));
                     }
                 });
 
-                requestPermissions();*/
+                //end list view work
 
 
 
@@ -216,48 +180,6 @@ public class MainActivity extends AppCompatActivity {
 
 
             return rootView;
-        }
-
-        public static String parseTestResponse(String response) {
-            String formattedResponse = "";
-            try {
-                JSONObject json = new JSONObject(response);
-                Iterator<String> iter = json.keys();
-
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    String value = json.getString(key);
-                    formattedResponse += key + ": " + value + "\n";
-                }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return formattedResponse;
-        }
-        private void requestPermissions() {
-            String[] permissions = new String[2];
-
-            permissions[0] = Manifest.permission.INTERNET;
-            permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
-
-            ActivityCompat.requestPermissions(getActivity() , permissions, MY_PERMISSIONS_INT);
-        }
-
-        @Override
-        public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-            switch (requestCode) {
-                case MY_PERMISSIONS_INT: {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                            Log.d("Wishlist", "Permission " + i + " granted!");
-                        }
-                        else {
-                            Log.d("Wishlist", "Permission " + i + " denied...");
-                        }
-                    }
-                }
-            }
         }
 
     }

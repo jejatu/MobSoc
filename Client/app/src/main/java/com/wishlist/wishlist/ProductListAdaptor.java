@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * Created by honey on 4/20/2016.
  */
-public class ProducrListAdaptor implements android.widget.ListAdapter {
+public class ProductListAdaptor implements android.widget.ListAdapter {
     private List<Product> productList ;
-    public ProducrListAdaptor(List<Product> productList){
+    public ProductListAdaptor(List<Product> productList){
         this.productList=productList;
     }
 
