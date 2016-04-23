@@ -3,7 +3,7 @@
 ## TODO
 * ~~Login~~
 * ~~Get family products from server~~
-* Registering on the client side
-* Add product to server
+* Sending registering info to the server - Jere
+* Add product to server - Jere
 * Change active family
 * Images
