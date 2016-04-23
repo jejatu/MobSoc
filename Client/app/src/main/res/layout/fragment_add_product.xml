@@ -83,7 +83,7 @@
 
         android:scaleType="fitCenter"
         android:layout_alignParentRight="true"
-        app:riv_corner_radius="30dip"
+        app:riv_corner_radius="10dip"
         app:riv_border_width="2dip"
         app:riv_border_color="#00ccff"
         app:riv_mutate_background="true"
@@ -96,7 +96,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp">
 
         <android.support.design.widget.FloatingActionButton
