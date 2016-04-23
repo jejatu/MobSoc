@@ -66,23 +66,23 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void createfamilygroup(View view){
+    public void createfamilygroup(View view) {
         intent = new Intent(this, CreateFamilyGroup.class);
         startActivity(intent);
     }
 
-    public void joinfamilygroup(View view){
+    public void joinfamilygroup(View view) {
         intent = new Intent(this, JoinFamilyGroup.class);
         startActivity(intent);
     }
 
-    public void login(View view){
+    public void login(View view) {
         intent = new Intent(this, MainActivity.class);
 
         EditText input_username = (EditText) findViewById(R.id.input_username);
         EditText input_password = (EditText) findViewById(R.id.input_password);
-        String name = input_username.getText().toString();
-        String password = input_password.getText().toString();
+        final String name = input_username.getText().toString();
+        final String password = input_password.getText().toString();
 
         HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, password), new HttpCallback() {
             @Override

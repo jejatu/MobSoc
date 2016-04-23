@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS sessions(
   token TEXT PRIMARY KEY,
   user_id INTEGER,
+  family_id INTEGER,
   add_date TEXT,
   FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   UNIQUE(token),
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS families(
 CREATE TABLE IF NOT EXISTS user_families(
   family_id INTEGER,
   user_id INTEGER,
+  accepted INTEGER,
   FOREIGN KEY(family_id) REFERENCES families(family_id) ON DELETE CASCADE,
   FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   PRIMARY KEY(family_id, user_id)

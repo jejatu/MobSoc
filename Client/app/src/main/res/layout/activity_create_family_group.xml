@@ -84,7 +84,7 @@
             android:contextClickable="true"
             android:textColor="#02ccff"
             android:textSize="14dp"
-            android:onClick="familySignup"/>
+            android:onClick="createfamilygroup"/>
 
         <TextView android:id="@+id/link_login"
             android:layout_width="fill_parent"

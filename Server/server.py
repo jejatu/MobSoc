@@ -89,8 +89,22 @@ def register_member():
 
     return "", 204
 
-@app.route("/products")
-def products():
+@app.route("/families", methods = ["GET"])
+def families():
+    try:
+        token = request.args.get("token")
+    except:
+        return "", 400
+
+    families = engine.get_families(token)
+
+    envelope = {}
+    envelope["families"] = families;
+
+    return json.dumps(envelope), 200
+
+@app.route("/products", methods = ["GET"])
+def get_products():
     try:
         token = request.args.get("token")
     except:
@@ -102,6 +116,20 @@ def products():
     envelope["products"] = products;
 
     return json.dumps(envelope), 200
+
+@app.route("/products", methods = ["POST"])
+def add_product():
+    data = request.get_json(force=True)
+    try:
+        token = request.args.get("token")
+        name = data["name"]
+        description = data["description"]
+    except:
+        return "", 400
+
+    engine.add_product(token, name, description)
+
+    return "", 204
 
 if __name__ == '__main__':
     app.run(debug=True)

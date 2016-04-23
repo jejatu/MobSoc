@@ -28,6 +28,33 @@ public class JSONHelper {
         return json;
     }
 
+    public static JSONObject createRegisterFamily(String name, String email, String familyName, String password) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("name", name);
+            json.put("email", email);
+            json.put("family_name", familyName);
+            json.put("password", password);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    public static JSONObject createRegisterMember(String name, String familyName, String password) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("name", name);
+            json.put("family_name", familyName);
+            json.put("password", password);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     public static String parseToken(JSONObject response) {
         String token = "";
         try {

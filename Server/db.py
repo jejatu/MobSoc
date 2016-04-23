@@ -73,15 +73,6 @@ class Engine():
 
         return {"data": results, "id": cur.lastrowid}
 
-    def parse_families(self, results):
-        families = []
-        for result in results:
-            family = {}
-            family["family_id"] = str(result[0])
-            family["name"] = result[1]
-            families.append(family)
-        return families
-
     def parse_users(self, results):
         users = []
         for result in results:
@@ -101,9 +92,19 @@ class Engine():
             session = {}
             session["token"] = result[0]
             session["user_id"] = str(result[1])
-            session["add_date"] = result[2]
+            session["family_id"] = str(result[2])
+            session["add_date"] = result[3]
             sessions.append(session)
         return sessions
+
+    def parse_families(self, results):
+        families = []
+        for result in results:
+            family = {}
+            family["family_id"] = str(result[0])
+            family["name"] = result[1]
+            families.append(family)
+        return families
 
     def parse_products(self, results):
         products = []
@@ -127,15 +128,34 @@ class Engine():
 
     def get_products(self, token):
         results = self.execute_sql("SELECT * FROM products WHERE family_id = \
+                                    (SELECT family_id FROM sessions WHERE token = ?)", (token,))["data"]
+        return self.parse_products(results)
+
+    def get_families(self, token):
+        results = self.execute_sql("SELECT * FROM families WHERE family_id = \
                                     (SELECT family_id FROM user_families WHERE user_id = \
                                     (SELECT user_id FROM sessions WHERE token = ?))", (token,))["data"]
-        return self.parse_products(results)
+        if len(results) == 0:
+            return None
+        return self.parse_families(results)
+
+    def get_families_by_user(self, user_id):
+        results = self.execute_sql("SELECT * FROM families WHERE family_id = \
+                                    (SELECT family_id FROM user_families WHERE user_id = ?)", (user_id,))["data"]
+        if len(results) == 0:
+            return None
+        return self.parse_families(results)
 
     def add_session(self, user_id, token):
         self.execute_sql("DELETE FROM sessions WHERE user_id=?", (user_id,))
 
+        families = self.get_families_by_user(user_id)
+        if not families:
+            return None
+        family_id = families[0]["family_id"]
+
         date = str(datetime.now())
-        results = self.execute_sql("INSERT INTO sessions VALUES(?, ?, ?)", (token, user_id, date))
+        results = self.execute_sql("INSERT INTO sessions VALUES(?, ?, ?, ?)", (token, user_id, family_id, date))
 
         if not results:
             return None
@@ -152,18 +172,32 @@ class Engine():
                 return None
             family_id = self.execute_sql("INSERT INTO families VALUES(NULL, ?)", (family_name,))["id"]
             user_id = self.execute_sql("INSERT INTO users VALUES(NULL, ?, ?, ?, 0, 0)", (name, email, password))["id"]
-            self.execute_sql("INSERT INTO user_families VALUES(?, ?)", (family_id, user_id))
+            self.execute_sql("INSERT INTO user_families VALUES(?, ?, 1)", (family_id, user_id))
         except:
             return None
         return user_id
 
     def add_member(self, name, password, family_name):
         try:
-            family_id = self.execute_sql("SELECT * FROM families WHERE family_name=?", (family_name,))["id"]
-            if family_id == 0:
+            family_data = self.execute_sql("SELECT * FROM families WHERE family_name=?", (family_name,))["data"]
+            if len(family_data) == 0:
                 return None
+            family_id = self.parse_families(family_data)[0]["family_id"]
             user_id = self.execute_sql("INSERT INTO users VALUES(NULL, ?, NULL, ?, 1, 0)", (name, password))["id"]
-            self.execute_sql("INSERT INTO user_families VALUES(?, ?)", (family_id, user_id))
+            self.execute_sql("INSERT INTO user_families VALUES(?, ?, 1)", (family_id, user_id))
         except:
             return None
         return user_id
+
+    def add_product(self, token, name, description):
+        try:
+            user = self.execute_sql("SELECT * FROM users WHERE user_id = \
+                                    (SELECT user_id FROM sessions WHERE token = ?)", (token, ))["data"]
+            family = self.execute_sql("SELECT * FROM families WHERE family_id = \
+                                    (SELECT family_id FROM sessions WHERE token = ?)", (token, ))["data"]
+            date = str(datetime.now())
+            image_url = "test.jpg"
+            product_id = self.execute_sql("INSERT INTO products VALUES(NULL, ?, ?, ?, ?, ?, ?)", (name, description, user["name"], date, image_url, family["family_id"]))["id"]
+        except:
+            return None
+        return product_id
