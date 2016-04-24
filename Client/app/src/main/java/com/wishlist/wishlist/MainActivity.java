@@ -4,7 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,12 +27,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -83,19 +91,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void dispatchTakePictureIntent(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
+
 
     public void addProduct(View view) {
         EditText input_product_name = (EditText) findViewById(R.id.input_product_name);
         EditText input_product_description = (EditText) findViewById(R.id.input_product_description);
         final String name = input_product_name.getText().toString();
         final String description = input_product_description.getText().toString();
-
+        String imageAbsoluteUrl=mCurrentPhotoPath;
         if (!name.isEmpty() && !description.isEmpty()) {
             String token = AuthHelper.getAuthToken(getApplicationContext());
 
@@ -119,11 +122,65 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView mImageView=(ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
-            mImageView.setImageBitmap(imageBitmap);
+            //Bundle extras = data.getExtras();
+            //Bitmap imageBitmap = (Bitmap) extras.get("data");
+            //ImageView mImageView=(ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
+            //mImageView.setImageBitmap(imageBitmap);
+            System.out.println("Photo Path2"+mCurrentPhotoPath);
+            File imgFile = new  File(mCurrentPhotoPath);
+
+            if(imgFile.exists()){
+
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+
+                ImageView myImage = (ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
+
+                myImage.setImageBitmap(myBitmap);
+
+            }
         }
+    }
+    public void dispatchTakePictureIntent(View view) {
+       /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }*/
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                System.out.println("Error in creating image: "+ ex.getMessage()+ex.getStackTrace());
+                Toast.makeText(getApplicationContext(), "Error in creating image file", Toast.LENGTH_LONG).show();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+    public String mCurrentPhotoPath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
