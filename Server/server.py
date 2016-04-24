@@ -90,6 +90,13 @@ def register_member():
 
     return "", 204
 
+@app.route("/me", methods = ["GET"])
+def me():
+    try:
+        token = request.args.get("token")
+    except:
+        return "", 400
+
 @app.route("/products", methods = ["GET"])
 def get_products():
     try:
@@ -114,7 +121,10 @@ def add_product():
     except:
         return "", 400
 
-    engine.add_product(token, name, description)
+    result = engine.add_product(token, name, description)
+
+    if not result:
+        return "", 500
 
     return "", 204
 

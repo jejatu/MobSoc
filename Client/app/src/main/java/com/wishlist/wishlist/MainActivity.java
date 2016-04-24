@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -81,12 +82,40 @@ public class MainActivity extends AppCompatActivity {
 */
 
     }
+
     public void dispatchTakePictureIntent(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
+    public void addProduct(View view) {
+        EditText input_product_name = (EditText) findViewById(R.id.input_product_name);
+        EditText input_product_description = (EditText) findViewById(R.id.input_product_description);
+        final String name = input_product_name.getText().toString();
+        final String description = input_product_description.getText().toString();
+
+        if (!name.isEmpty() && !description.isEmpty()) {
+            String token = AuthHelper.getAuthToken(getApplicationContext());
+
+            HttpClient.sendPostRequest("products?token=" + token, JSONHelper.createAddProduct(token, name, description), new HttpCallback() {
+                @Override
+                public void success(JSONObject response) {
+                    Toast.makeText(getApplicationContext(), "Product added!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void failure(JSONObject response) {
+                    Toast.makeText(getApplicationContext(), "Adding product failed.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "No name or description for product.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
@@ -171,19 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String token = AuthHelper.getAuthToken(getContext());
 
-                HttpClient.sendGetRequest("products?token=" + token, new HttpCallback() {
-                    @Override
-                    public void success(JSONObject response) {
-                        List<Product> productList = JSONHelper.parseProducts(response);
-                        listView.setAdapter(new ProductListAdaptor(productList));
-                    }
-
-                    @Override
-                    public void failure(JSONObject response) {
-                        listView.setAdapter(new ProductListAdaptor(Product.productDummyData()));
-                    }
-                });
-
+                refreshProducts();
                 //end list view work
 
 
@@ -199,6 +216,33 @@ public class MainActivity extends AppCompatActivity {
 
 
             return rootView;
+        }
+
+        @Override
+        public void setUserVisibleHint(boolean isVisibleToUser) {
+            super.setUserVisibleHint(isVisibleToUser);
+            if (isVisibleToUser) {
+                refreshProducts();
+            }
+        }
+
+        private void refreshProducts() {
+            if (listView != null) {
+                String token = AuthHelper.getAuthToken(getContext());
+
+                HttpClient.sendGetRequest("products?token=" + token, new HttpCallback() {
+                    @Override
+                    public void success(JSONObject response) {
+                        List<Product> productList = JSONHelper.parseProducts(response);
+                        listView.setAdapter(new ProductListAdaptor(productList));
+                    }
+
+                    @Override
+                    public void failure(JSONObject response) {
+                        listView.setAdapter(new ProductListAdaptor(Product.productDummyData()));
+                    }
+                });
+            }
         }
 
     }

@@ -5,9 +5,9 @@
 * ~~Get family products from server~~
 * ~~Registering~~
 * ~~Server add product api~~
-* Send new product from client to server (Jere)
+* ~~Send new product from client to server~~
 * Get user info from server and show in client (Jere)
-* Change active family in client
+* Log out
 * Send image from client to server
 * Save images in the server
 * Send images from the server to client

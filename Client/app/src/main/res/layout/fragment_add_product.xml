@@ -68,6 +68,7 @@
         android:background="#00ccff"
         android:clickable="true"
         android:contextClickable="true"
+        android:onClick="addProduct"
         android:textColor="#ffffff"
         android:textSize="14sp" />
 
