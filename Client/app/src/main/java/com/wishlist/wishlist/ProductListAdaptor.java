@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -69,6 +70,7 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         public TextView rowProductDescription;
         public TextView rowDate;
         public TextView rowAdderName;
+        public ImageView productImage;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -84,6 +86,7 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
             viewHolder.rowAdderName=(TextView)convertView.findViewById(R.id.adder_name);
             viewHolder.rowProductDescription=(TextView)convertView.findViewById(R.id.product_description);
             viewHolder.rowDate=(TextView)convertView.findViewById(R.id.added_date);
+            viewHolder.productImage=(ImageView) convertView.findViewById(R.id.thumbnailViewImage);
             convertView.setTag(viewHolder);
         } else
             viewHolder = (ViewHolder)convertView.getTag();
@@ -92,6 +95,9 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         viewHolder.rowProductDescription.setText(productList.get(position).getProductDescription());
         viewHolder.rowAdderName.setText(productList.get(position).getProductAdder());
 
+        if(productList.get(position).getBitmap()!=null){
+            viewHolder.productImage.setImageBitmap(productList.get(position).getBitmap());
+        }
         Date date=productList.get(position).getAddingDate();
         SimpleDateFormat destDf = new SimpleDateFormat("MM/dd/yyyy");
         String mydate = destDf.format(date);

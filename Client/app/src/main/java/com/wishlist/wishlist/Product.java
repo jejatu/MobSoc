@@ -1,5 +1,7 @@
 package com.wishlist.wishlist;
 
+import android.graphics.Bitmap;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class Product {
     private String productAdder;
     private boolean status;
     private int productId;
+    private Bitmap bitmap;
 
     public int getProductId() {
         return productId;
@@ -23,6 +26,23 @@ public class Product {
 
     public void setProductId(int productId) {
         this.productId = productId;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public Product(String productName, Date addingDate, String productDescription, String productAdder, boolean status, Bitmap bitmap) {
+        this.productName = productName;
+        this.addingDate = addingDate;
+        this.productDescription = productDescription;
+        this.productAdder = productAdder;
+        this.status = status;
+        this.bitmap = bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     public Product(String productName, String productDescription, String productAdder, Date addingDate, boolean status) {
