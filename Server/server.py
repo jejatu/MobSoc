@@ -16,11 +16,12 @@ def login():
     data = request.get_json(force=True)
     try:
         name = data["name"]
+        family_name = data["family_name"]
         password = data["password"]
     except:
         return "", 400
 
-    user = engine.get_user(name)
+    user = engine.get_user(name, family_name)
 
     if not user:
         return "", 401
@@ -30,7 +31,7 @@ def login():
 
     token = generate_token()
 
-    result = engine.add_session(user["user_id"], token)
+    result = engine.add_session(user, token)
 
     if not result:
         return "", 500
@@ -88,20 +89,6 @@ def register_member():
         return "", 401
 
     return "", 204
-
-@app.route("/families", methods = ["GET"])
-def families():
-    try:
-        token = request.args.get("token")
-    except:
-        return "", 400
-
-    families = engine.get_families(token)
-
-    envelope = {}
-    envelope["families"] = families;
-
-    return json.dumps(envelope), 200
 
 @app.route("/products", methods = ["GET"])
 def get_products():

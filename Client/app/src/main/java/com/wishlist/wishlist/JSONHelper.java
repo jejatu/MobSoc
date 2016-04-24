@@ -16,10 +16,11 @@ import java.util.Locale;
  * Created by jeret on 21.4.2016.
  */
 public class JSONHelper {
-    public static JSONObject createLogin(String name, String password) {
+    public static JSONObject createLogin(String name, String family_name, String password) {
         JSONObject json = new JSONObject();
         try {
             json.put("name", name);
+            json.put("family_name", family_name);
             json.put("password", password);
         }
         catch (JSONException e) {

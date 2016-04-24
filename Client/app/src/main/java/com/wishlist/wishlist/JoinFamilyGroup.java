@@ -41,7 +41,7 @@ public class JoinFamilyGroup extends AppCompatActivity {
         HttpClient.sendPostRequest("register_member", JSONHelper.createRegisterMember(name, familyName, password), new HttpCallback() {
             @Override
             public void success(JSONObject response) {
-                HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, password), new HttpCallback() {
+                HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, familyName, password), new HttpCallback() {
                     @Override
                     public void success(JSONObject response) {
                         String token = JSONHelper.parseToken(response);

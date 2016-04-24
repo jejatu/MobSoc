@@ -81,23 +81,33 @@ public class LoginActivity extends AppCompatActivity {
 
         EditText input_username = (EditText) findViewById(R.id.input_username);
         EditText input_password = (EditText) findViewById(R.id.input_password);
-        final String name = input_username.getText().toString();
+        final String username = input_username.getText().toString();
         final String password = input_password.getText().toString();
 
-        HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, password), new HttpCallback() {
-            @Override
-            public void success(JSONObject response) {
-                String token = JSONHelper.parseToken(response);
-                AuthHelper.saveAuthToken(token, getApplicationContext());
-                Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-            }
-            @Override
-            public void failure(JSONObject response) {
-                Toast.makeText(getApplicationContext(), "Login failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-            }
-        });
+        String[] names = username.split("@");
+
+        if (names.length == 2) {
+            String name = names[0];
+            String family_name = names[1];
+            HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, family_name, password), new HttpCallback() {
+                @Override
+                public void success(JSONObject response) {
+                    String token = JSONHelper.parseToken(response);
+                    AuthHelper.saveAuthToken(token, getApplicationContext());
+                    Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                }
+
+                @Override
+                public void failure(JSONObject response) {
+                    Toast.makeText(getApplicationContext(), "Login failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                }
+            });
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Not a valid username.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

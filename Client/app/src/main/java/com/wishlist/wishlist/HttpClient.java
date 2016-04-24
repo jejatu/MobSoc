@@ -15,7 +15,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpClient {
-    static String serverUrl = "http://masu.pythonanywhere.com/";
+    // 10.0.2.2:5000 for emulation
+    static String serverUrl = "http://10.0.2.2:5000/";
     static int timeout = 1000;
 
     public static void sendGetRequest(String subUrl, HttpCallback responseCallback) {
