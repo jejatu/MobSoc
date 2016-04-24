@@ -183,6 +183,15 @@ class Engine():
             return None
         family = self.parse_families(family_data)[0]
         date = str(datetime.now())
-        image_url = "test.jpg"
-        product_id = self.execute_sql("INSERT INTO products VALUES(NULL, ?, ?, ?, ?, ?, ?)", (name, description, user["name"], date, image_url, family["family_id"]))["id"]
+        product_id = self.execute_sql("INSERT INTO products VALUES(NULL, ?, ?, ?, ?, ?)", (name, description, user["name"], date, family["family_id"]))["id"]
         return product_id
+
+    def has_product(self, token, product_id):
+        product_data = self.execute_sql("SELECT * FROM products WHERE family_id = \
+                                        (SELECT family_id FROM sessions WHERE token = ?)", (token,))["data"]
+
+        for product in product_data:
+            if str(product[0]) == product_id:
+                return True
+
+        return False

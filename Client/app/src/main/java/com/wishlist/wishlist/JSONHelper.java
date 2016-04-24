@@ -68,6 +68,17 @@ public class JSONHelper {
         return json;
     }
 
+    public static String parseProductId(JSONObject response) {
+        String id = "";
+        try {
+            id = response.getString("product_id");
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
     public static String parseToken(JSONObject response) {
         String token = "";
         try {

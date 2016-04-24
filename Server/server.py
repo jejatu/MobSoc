@@ -1,10 +1,18 @@
 import json
 from flask import Flask, request
+from werkzeug import secure_filename
 import db
 import uuid
+import os
 
 app = Flask(__name__)
 app.debug = True
+
+UPLOAD_FOLDER = 'images'
+ALLOWED_EXTENSIONS = set(['jpg'])
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 engine = db.Engine()
 
@@ -121,12 +129,39 @@ def add_product():
     except:
         return "", 400
 
-    result = engine.add_product(token, name, description)
+    product_id = engine.add_product(token, name, description)
 
-    if not result:
+    if not product_id:
         return "", 500
 
-    return "", 204
+    envelope = {}
+    envelope["product_id"] = product_id;
+
+    return json.dumps(envelope), 200
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/image', methods=['POST'])
+def image():
+    try:
+        token = request.args.get("token")
+        product_id = request.args.get("product_id")
+    except:
+        return "", 400
+
+    if not engine.has_product(token, product_id):
+        return "", 500
+
+    name = product_id + ".jpg"
+
+    file = request.files['uploaded_file']
+    if file and allowed_file(name):
+        filename = secure_filename(name)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return "", 204
+    return "", 400
 
 if __name__ == '__main__':
     app.run(debug=True)

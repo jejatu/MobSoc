@@ -91,21 +91,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     public void addProduct(View view) {
         EditText input_product_name = (EditText) findViewById(R.id.input_product_name);
         EditText input_product_description = (EditText) findViewById(R.id.input_product_description);
         final String name = input_product_name.getText().toString();
         final String description = input_product_description.getText().toString();
-        String imageAbsoluteUrl=mCurrentPhotoPath;
+
         if (!name.isEmpty() && !description.isEmpty()) {
-            String token = AuthHelper.getAuthToken(getApplicationContext());
+            final String token = AuthHelper.getAuthToken(getApplicationContext());
 
             HttpClient.sendPostRequest("products?token=" + token, JSONHelper.createAddProduct(token, name, description), new HttpCallback() {
                 @Override
                 public void success(JSONObject response) {
                     Toast.makeText(getApplicationContext(), "Product added!", Toast.LENGTH_SHORT).show();
+
+                    if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty()) {
+                        String productId = JSONHelper.parseProductId(response);
+                        System.out.println("image?token=" + token + "&product_id=" + productId);
+                        HttpClient.sendImage("image?token=" + token + "&product_id=" + productId, mCurrentPhotoPath, new HttpCallback() {
+                            @Override
+                            public void success(JSONObject response) {
+                                Toast.makeText(getApplicationContext(), "Image uploaded!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void failure(JSONObject response) {
+                                Toast.makeText(getApplicationContext(), "Uploading image failed.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
 
                 @Override

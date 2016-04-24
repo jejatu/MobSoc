@@ -42,10 +42,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void requestPermissions() {
-        String[] permissions = new String[2];
+        String[] permissions = new String[3];
 
         permissions[0] = Manifest.permission.INTERNET;
         permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
+        permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
         ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
     }
