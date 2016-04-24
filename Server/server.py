@@ -5,14 +5,12 @@ import db
 import uuid
 import os
 
-app = Flask(__name__)
-app.debug = True
-
 UPLOAD_FOLDER = 'images'
 ALLOWED_EXTENSIONS = set(['jpg'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.debug = True
 
 engine = db.Engine()
 
@@ -141,7 +139,7 @@ def add_product():
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 @app.route('/image', methods=['POST'])
 def image():
