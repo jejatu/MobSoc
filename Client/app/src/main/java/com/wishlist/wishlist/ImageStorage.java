@@ -40,7 +40,7 @@ public class ImageStorage {
             if (!myDir.exists())
                 return null;
 
-            mediaImage = new File(myDir.getPath() + "/.your_specific_directory/"+imagename);
+            mediaImage = new File(myDir.getPath() + "/.shopitbaby/"+imagename);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -56,8 +56,7 @@ public class ImageStorage {
         if (path != null)
             b = BitmapFactory.decodeFile(path);
 
-        if(b == null ||  b.equals(""))
-        {
+        if(b == null ||  b.equals("")) {
             return false ;
         }
         return true ;

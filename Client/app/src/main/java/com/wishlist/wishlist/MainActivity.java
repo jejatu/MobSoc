@@ -107,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty()) {
                         String productId = JSONHelper.parseProductId(response);
-                        System.out.println("image?token=" + token + "&product_id=" + productId);
-                        HttpClient.sendImage("image?token=" + token + "&product_id=" + productId, mCurrentPhotoPath, new HttpCallback() {
+                        HttpClient.sendImage("image/" + productId + "?token=" + token, mCurrentPhotoPath, new HttpCallback() {
                             @Override
                             public void success(JSONObject response) {
                                 Toast.makeText(getApplicationContext(), "Image uploaded!", Toast.LENGTH_SHORT).show();

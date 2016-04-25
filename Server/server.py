@@ -151,11 +151,10 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/image', methods=['POST'])
-def image():
+@app.route('/image/<product_id>', methods=['POST'])
+def image(product_id):
     try:
         token = request.args.get("token")
-        product_id = request.args.get("product_id")
     except:
         return "", 400
 
