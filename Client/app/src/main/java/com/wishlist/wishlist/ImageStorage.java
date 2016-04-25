@@ -9,12 +9,13 @@ import java.io.FileOutputStream;
 
 // copied from http://stackoverflow.com/questions/15549421/how-to-download-and-save-an-image-in-android
 public class ImageStorage {
+    static String directory = ".shopitbaby";
     public static String saveToSdCard(Bitmap bitmap, String filename) {
         String stored = null;
 
         File sdcard = Environment.getExternalStorageDirectory() ;
 
-        File folder = new File(sdcard.getAbsoluteFile(), ".your_specific_directory");//the dot makes this directory hidden to the user
+        File folder = new File(sdcard.getAbsoluteFile(), directory);//the dot makes this directory hidden to the user
         folder.mkdir();
         File file = new File(folder.getAbsoluteFile(), filename + ".jpg") ;
         if (file.exists())
@@ -40,7 +41,7 @@ public class ImageStorage {
             if (!myDir.exists())
                 return null;
 
-            mediaImage = new File(myDir.getPath() + "/.shopitbaby/"+imagename);
+            mediaImage = new File(myDir.getPath() + "/" + directory + "/"+imagename);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
