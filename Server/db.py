@@ -1,6 +1,7 @@
 import os, sqlite3, traceback
 from datetime import datetime
 
+DEFAULT_IMAGES_PATH = "images/"
 DEFAULT_DB_PATH = "db/db.db"
 DEFAULT_DB_SCHEMA = "db/schema.sql"
 DEFAULT_DB_DATA = "db/data.sql"
@@ -112,11 +113,15 @@ class Engine():
         products = []
         for result in results:
             product = {}
+            product["product_id"] = str(result[0])
             product["name"] = result[1]
             product["description"] = result[2]
             product["adder"] = result[3]
             product["add_date"] = result[4]
-            product["image_url"] = result[5]
+            product["has_image"] = 0
+            path = os.path.join(DEFAULT_IMAGES_PATH, product["product_id"] + ".jpg")
+            if os.path.isfile(path):
+                product["has_image"] = 1
             products.append(product)
         return products
 
@@ -127,6 +132,14 @@ class Engine():
             return None
 
         return self.parse_users(results)[0]
+
+    def get_user_by_token(self, token):
+        user_data = self.execute_sql("SELECT * FROM users WHERE user_id = \
+                                (SELECT user_id FROM sessions WHERE token = ?)", (token,))["data"]
+        if len(user_data) == 0:
+            return None
+
+        return self.parse_users(user_data)[0]
 
     def get_products(self, token):
         results = self.execute_sql("SELECT * FROM products WHERE family_id = \

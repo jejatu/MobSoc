@@ -3,6 +3,7 @@ package com.wishlist.wishlist;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.widget.ImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,16 +14,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 public class HttpClient {
     // http://10.0.2.2:5000/ for emulation
     // http://masu.pythonanywhere.com/ for external
-    static String serverUrl = "http://masu.pythonanywhere.com/";
+    static String serverUrl = "http://10.0.2.2:5000/";
     static int timeout = 1000;
 
     public static void sendGetRequest(String subUrl, HttpCallback responseCallback) {
@@ -35,6 +38,23 @@ public class HttpClient {
 
     public static void sendImage(String subUrl, String imagePath, HttpCallback responseCallback) {
         new HttpImageTask(responseCallback).execute(subUrl, imagePath);
+    }
+
+    // copied from http://stackoverflow.com/questions/15549421/how-to-download-and-save-an-image-in-android
+    public static void downloadImage(String subUrl, String name, String familyName, String productId, ImageView imageView) {
+        if (name != null && familyName != null) {
+            String imageName = name + "_" + familyName + "_" + productId;
+            if (ImageStorage.checkifImageExists(imageName)) {
+                File file = ImageStorage.getImage("/" + imageName + ".jpg");
+                String path = file.getAbsolutePath();
+                if (path != null) {
+                    Bitmap b = BitmapFactory.decodeFile(path);
+                    imageView.setImageBitmap(b);
+                }
+            } else {
+                new GetImages(serverUrl + subUrl, imageView, imageName).execute();
+            }
+        }
     }
 
     public static HttpResponse makeImage(String subUrl, String imagePath) {
@@ -230,5 +250,40 @@ public class HttpClient {
 
         @Override
         protected void onProgressUpdate(Void... values) {}
+    }
+
+    // copied from http://stackoverflow.com/questions/15549421/how-to-download-and-save-an-image-in-android
+    private static class GetImages extends AsyncTask<Object, Object, Object> {
+        private String requestUrl, imagename_;
+        private ImageView view;
+        private Bitmap bitmap = null;
+        private FileOutputStream fos;
+
+        private GetImages(String requestUrl, ImageView view, String _imagename_) {
+            this.requestUrl = requestUrl;
+            this.view = view;
+            this.imagename_ = _imagename_ ;
+        }
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+            try {
+                URL url = new URL(requestUrl);
+                URLConnection conn = url.openConnection();
+                bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            if (bitmap != null && !ImageStorage.checkifImageExists(imagename_)) {
+                view.setImageBitmap(bitmap);
+                ImageStorage.saveToSdCard(bitmap, imagename_);
+            }
+        }
     }
 }

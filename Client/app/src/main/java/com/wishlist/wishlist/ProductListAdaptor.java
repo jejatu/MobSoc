@@ -95,9 +95,15 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         viewHolder.rowProductDescription.setText(productList.get(position).getProductDescription());
         viewHolder.rowAdderName.setText(productList.get(position).getProductAdder());
 
-        if(productList.get(position).getBitmap()!=null){
-            viewHolder.productImage.setImageBitmap(productList.get(position).getBitmap());
+        if (productList.get(position).ownsImage()) {
+            String productId = productList.get(position).getServerId();
+            if (productId != null) {
+                String imageUrl = "image/" + productId;
+                String token = AuthHelper.getAuthToken(parent.getContext());
+                HttpClient.downloadImage(imageUrl + "?token=" + token, AuthHelper.getName(), AuthHelper.getFamilyName(), productId, viewHolder.productImage);
+            }
         }
+
         Date date=productList.get(position).getAddingDate();
         SimpleDateFormat destDf = new SimpleDateFormat("MM/dd/yyyy");
         String mydate = destDf.format(date);

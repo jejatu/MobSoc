@@ -100,7 +100,8 @@ public class JSONHelper {
                 String description = product.getString("description");
                 String adder = product.getString("adder");
                 String add_date = product.getString("add_date");
-                String image_url = product.getString("image_url");
+                String product_id = product.getString("product_id");
+                String has_image = product.getString("has_image");
 
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
                 Date date = new Date();
@@ -112,7 +113,11 @@ public class JSONHelper {
                     e.printStackTrace();
                 }
 
-                productList.add(new Product(name, description, adder, date, true));
+                boolean hasImage = false;
+                if (has_image.equals("1")) {
+                    hasImage = true;
+                }
+                productList.add(new Product(name, description, adder, product_id, date, hasImage, true));
             }
         }
         catch (JSONException e) {

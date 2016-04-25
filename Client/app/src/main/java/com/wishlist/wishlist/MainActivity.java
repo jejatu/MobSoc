@@ -273,15 +273,9 @@ public class MainActivity extends AppCompatActivity {
 
                 refreshProducts();
                 //end list view work
-
-
-
-            }else if(getArguments().getInt(ARG_SECTION_NUMBER)==2){
-
-
+            }
+            else if(getArguments().getInt(ARG_SECTION_NUMBER)==2){
                 //FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-
-
                 rootView=inflater.inflate(R.layout.fragment_add_product, container, false);
             }
 

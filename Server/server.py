@@ -1,5 +1,5 @@
 import json
-from flask import Flask, request
+from flask import Flask, request, send_file
 from werkzeug import secure_filename
 import db
 import uuid
@@ -103,6 +103,16 @@ def me():
     except:
         return "", 400
 
+    user = engine.get_user_by_token(token)
+
+    if not user:
+        return 500
+
+    envelope = {}
+    envelope["name"] = user["name"]
+    envelope["family_name"] = user["family_name"]
+    return json.dumps(envelope), 200
+
 @app.route("/products", methods = ["GET"])
 def get_products():
     try:
@@ -160,6 +170,21 @@ def image():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return "", 204
     return "", 400
+
+@app.route('/image/<product_id>', methods=['GET'])
+def get_image(product_id):
+    try:
+        token = request.args.get("token")
+    except:
+        return "", 400
+
+    if not engine.has_product(token, product_id):
+        return "", 500
+
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], product_id + ".jpg")
+    if os.path.isfile(filename):
+        return send_file(filename, mimetype='image/gif')
+    return "", 404
 
 if __name__ == '__main__':
     app.run(debug=True)

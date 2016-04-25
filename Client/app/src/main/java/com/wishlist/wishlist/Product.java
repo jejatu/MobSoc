@@ -18,7 +18,8 @@ public class Product {
     private String productAdder;
     private boolean status;
     private int productId;
-    private Bitmap bitmap;
+    private String serverId;
+    private boolean hasImage;
 
     public int getProductId() {
         return productId;
@@ -28,21 +29,22 @@ public class Product {
         this.productId = productId;
     }
 
-    public Bitmap getBitmap() {
-        return bitmap;
+    public boolean ownsImage() {
+        return hasImage;
     }
 
-    public Product(String productName, Date addingDate, String productDescription, String productAdder, boolean status, Bitmap bitmap) {
+    public String getServerId() {
+        return serverId;
+    }
+
+    public Product(String productName, String productDescription, String productAdder, String serverId, Date addingDate, boolean hasImage, boolean status) {
         this.productName = productName;
         this.addingDate = addingDate;
         this.productDescription = productDescription;
         this.productAdder = productAdder;
         this.status = status;
-        this.bitmap = bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
+        this.serverId = serverId;
+        this.hasImage = hasImage;
     }
 
     public Product(String productName, String productDescription, String productAdder, Date addingDate, boolean status) {
@@ -52,6 +54,7 @@ public class Product {
         this.addingDate = addingDate;
         this.status = status;
     }
+
     public static List<Product> productDummyData(){
         List<Product> productList=new ArrayList();
         Date date = new Date();

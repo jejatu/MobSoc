@@ -88,13 +88,14 @@ public class LoginActivity extends AppCompatActivity {
         String[] names = username.split("@");
 
         if (names.length == 2) {
-            String name = names[0];
-            String family_name = names[1];
+            final String name = names[0];
+            final String family_name = names[1];
             HttpClient.sendPostRequest("login", JSONHelper.createLogin(name, family_name, password), new HttpCallback() {
                 @Override
                 public void success(JSONObject response) {
                     String token = JSONHelper.parseToken(response);
                     AuthHelper.saveAuthToken(token, getApplicationContext());
+                    AuthHelper.saveInfo(name, family_name);
                     Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
                     startActivity(intent);
                 }
