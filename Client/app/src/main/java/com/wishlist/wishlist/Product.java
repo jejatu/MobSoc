@@ -1,9 +1,12 @@
 package com.wishlist.wishlist;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +61,8 @@ public class Product {
     public static List<Product> productDummyData(){
         List<Product> productList=new ArrayList();
         Date date = new Date();
-        Product product=new Product("Sugar", "Please bring it today", "Mommy", date, true);
+
+        Product product=new Product("Sugar", "Please bring it today Please bring it today s d d d d d d d dPlease bring it today  Please bring it today Please bring it today", "Mommy", date, true);
         Product product1=new Product("Milk", "fat free", "Mommy", date, true);
         Product product2=new Product("Water", "", "Arifa", date, true);
         Product product3=new Product("Coffee", "cappuccino", "Antti", date, true);
@@ -67,6 +71,7 @@ public class Product {
         Product product6=new Product("bulb", "200w", "Mikka", date, true);
         Product product7=new Product("yougurt", "2kg", "Mikka", date, true);
         Product product8=new Product("tissue", "8kpl", "Antti", date, true);
+
 
         productList.add(product);
         productList.add(product1);

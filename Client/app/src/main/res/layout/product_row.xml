@@ -12,6 +12,19 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp">
 
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/isPurchased"
+
+
+            android:layout_alignTop="@+id/added_date"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="-4dp"
+            android:layout_marginLeft="-7dp"
+            android:layout_marginBottom="-5dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,8 +32,9 @@
             android:id="@+id/product_name"
             android:layout_alignParentLeft="true"
             android:textSize="16dp"
-            android:autoText="false"
-            android:textColor="@android:color/background_dark" />
+
+            android:textColor="@android:color/background_dark"
+            android:layout_marginLeft="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,7 +43,9 @@
             android:text="Added Date"
             android:layout_alignParentRight="true"
             android:textSize="10dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:layout_alignEnd="@id/product_name"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -50,31 +66,47 @@
             android:textIsSelectable="false" />
 
 
-        <com.makeramen.roundedimageview.RoundedImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
-            android:scaleType="fitCenter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/thumbnailViewImage"
-            android:layout_alignParentRight="true"
-            app:riv_corner_radius="30dip"
-            app:riv_border_width="2dip"
-            app:riv_border_color="#00ccff"
-            app:riv_mutate_background="true"
-            app:riv_tile_mode="repeat"
-            app:riv_oval="false"
-            />
+            <com.makeramen.roundedimageview.RoundedImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+
+                android:id="@+id/thumbnailViewImage"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/logo"
+                app:riv_corner_radius="10dip"
+                app:riv_border_width="1dip"
+                app:riv_border_color="#00ccff"
+                app:riv_mutate_background="true"
+                app:riv_tile_mode="repeat"
+                app:riv_oval="false"
+                android:onClick="zoomImageProductList"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="right"
+                />
+
+        </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="product_description"
             android:id="@+id/product_description"
             android:layout_alignParentLeft="true"
             android:textSize="12dp"
             android:layout_alignParentBottom="false"
-            android:layout_below="@+id/adder_name" />
+            android:layout_below="@+id/adder_name"
+            android:layout_marginRight="72dp" />
 
 
     </RelativeLayout>

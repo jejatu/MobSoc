@@ -20,15 +20,18 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -91,6 +94,58 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static int mImageWidth=0;
+    public static int mImageHeight=0;
+    public static void zoomImageAddProduct(View view){
+
+        ImageView imageView=(ImageView) view.findViewById(R.id.thumbnailImageViewAddProduct);
+        LinearLayout.LayoutParams parms;
+        if(ViewGroup.LayoutParams.MATCH_PARENT!=imageView.getWidth() && mImageWidth==0){
+            mImageHeight=imageView.getHeight();
+            mImageWidth=imageView.getWidth();
+            parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        }else {
+
+            parms = new LinearLayout.LayoutParams(mImageWidth, mImageHeight);
+            parms.gravity= Gravity.CENTER_HORIZONTAL;
+            mImageWidth=0;
+            mImageHeight=0;
+        }
+
+        imageView.setLayoutParams(parms);
+
+    }
+    public static int mImageWidthList=0;
+    public static int mImageHeightList=0;
+    public static void zoomImageProductList(View view){
+
+
+        ImageView imageView=(ImageView) view.findViewById(R.id.thumbnailViewImage);
+        LinearLayout.LayoutParams parms;
+
+        if(ViewGroup.LayoutParams.MATCH_PARENT!=imageView.getWidth() && mImageWidthList==0){
+            mImageHeightList=imageView.getHeight();
+            mImageWidthList=imageView.getWidth();
+
+            parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 600);
+            parms.setMargins(0,130,0,30);
+
+
+        }else {
+
+            parms = new LinearLayout.LayoutParams(mImageWidthList, mImageHeightList);
+            parms.gravity= Gravity.RIGHT;
+            parms.setMargins(0,0,0,15);
+            mImageWidthList=0;
+            mImageHeight=0;
+        }
+
+
+        imageView.setLayoutParams(parms);
+
+
+    }
     public void addProduct(View view) {
         EditText input_product_name = (EditText) findViewById(R.id.input_product_name);
         EditText input_product_description = (EditText) findViewById(R.id.input_product_description);
@@ -299,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
                     public void success(JSONObject response) {
                         List<Product> productList = JSONHelper.parseProducts(response);
                         listView.setAdapter(new ProductListAdaptor(productList));
+
                     }
 
                     @Override
