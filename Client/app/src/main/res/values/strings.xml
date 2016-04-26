@@ -8,5 +8,9 @@
     <string name="title_activity_add_product">AddProduct</string>
     <string name="title_activity_main">Anti Family</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_delthis">delthis</string>
+    <string name="title_activity_delthis">Delthis</string>
+    <string name="title_logout">Logout</string>
+    <string name="refresh">Refresh</string>
+    <string name="addMember">Add Member</string>
+    <string name="switchAccount">Switch Account</string>
 </resources>

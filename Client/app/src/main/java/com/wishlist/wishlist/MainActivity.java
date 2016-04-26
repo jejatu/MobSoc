@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,17 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
-*/
+
 
     }
 
@@ -276,6 +268,15 @@ public class MainActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
+    public void floatingButtonOnClick(View view){
+        Fragment addProductFragmemt=PlaceholderFragment.newInstance(2);
+
+        TabHost host = (TabHost) findViewById(android.R.id.tabhost);
+        host.setCurrentTab(2);
+
+
+        Log.d("Test ","Passed");
+    }
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -299,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -306,12 +308,14 @@ public class MainActivity extends AppCompatActivity {
 
             if(getArguments().getInt(ARG_SECTION_NUMBER)==1){
 
-                FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+                FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab1);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                       Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                             .setAction("Action", null).show();
+                        newInstance(2);
+                        Log.d("Test ","Passssed");
                     }
                 });
 

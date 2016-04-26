@@ -3,11 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="codeplated.shopitbaby.MainActivity">
 
+
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/switchAccount"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/switchAccount"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/addMember"
+        android:orderInCategory="100"
+        android:title="@string/addMember"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/refresh"
+        android:orderInCategory="100"
+        android:title="@string/refresh"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/Logout"
+        android:orderInCategory="100"
+        android:title="@string/title_logout"
+        app:showAsAction="never" />
+
+
 
     <item
         android:id="@+id/btn_add_product"
