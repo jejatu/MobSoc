@@ -8,9 +8,10 @@
 * ~~Send new product from client to server~~
 * ~~Send image from client to server~~
 * ~~Save images in the server~~
+* ~~Send images from the server to client~~
+* ~~Show image on the client~~
 * Log out
-* Get user info from server and show in client (Jere)
-* Send images from the server to client (Jere)
-* Show image on the client (Abdul)
+* Get menu buttons to work
+* Scrolling products when list goes out of screen
 * Zoom image on click (Abdul)
 * I will provide you a seperate activity in which you will find list of famalies(Dummy), then you can fetch the data from server and you can show there.
