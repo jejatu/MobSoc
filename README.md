@@ -13,6 +13,7 @@
 * ~~Zoom image on click~~
 * Log out
 * Admin activity for accepting members
+* NOTIFICATIONS
 * Get menu buttons to work
 * Scrolling products when list goes out of screen
 * I will provide you a seperate activity in which you will find list of famalies(Dummy), then you can fetch the data from server and you can show there.
