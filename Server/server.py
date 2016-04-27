@@ -56,9 +56,6 @@ def logout():
 
     result = engine.remove_session(token)
 
-    if not result:
-        return "", 401
-
     return "", 204
 
 @app.route("/register_family", methods = ["POST"])
@@ -112,6 +109,36 @@ def me():
     envelope["name"] = user["name"]
     envelope["family_name"] = user["family_name"]
     return json.dumps(envelope), 200
+
+@app.route("/members", methods = ["GET"])
+def get_members():
+    try:
+        token = request.args.get("token")
+    except:
+        return "", 400
+
+    members = engine.get_members(token)
+
+    envelope = {}
+    envelope["members"] = members;
+
+    return json.dumps(envelope), 200
+
+@app.route("/members", methods = ["POST"])
+def accept_member():
+    data = request.get_json(force=True)
+    try:
+        token = request.args.get("token")
+        member_id = data["member_id"]
+    except:
+        return "", 400
+
+    result = engine.accept_member(token, member_id)
+
+    if not result:
+        return "", 500
+
+    return "", 204
 
 @app.route("/products", methods = ["GET"])
 def get_products():

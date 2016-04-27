@@ -24,6 +24,20 @@ public class AuthHelper {
         return token;
     }
 
+
+    public static void saveProductCount(int count, Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("count", count);
+        editor.commit();
+    }
+
+    public static int getProductCount(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        int count = pref.getInt("count", 0);
+        return count;
+    }
+
     public static void saveInfo(String name, String familyName) {
         name_ = name;
         familyName_ = familyName;

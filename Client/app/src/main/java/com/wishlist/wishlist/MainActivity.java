@@ -1,6 +1,10 @@
 package com.wishlist.wishlist;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -8,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -82,8 +87,18 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        setUpAlarm(getApplication());
+    }
 
+    // copied from http://stackoverflow.com/questions/20887270/android-periodically-polling-a-server-and-displaying-response-as-a-notificatio
+    public void setUpAlarm(Application context) {
+        int time = 60000;
+        Intent intent = new Intent(context, NotificationService.class);
+        PendingIntent pending_intent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+        AlarmManager alarm_mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarm_mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(), time, pending_intent);
     }
 
     public static int mImageWidth=0;
@@ -261,6 +276,19 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        else if (id == R.id.Logout) {
+            String token = AuthHelper.getAuthToken(getApplicationContext());
+            HttpClient.sendPostRequest("logout", JSONHelper.createLogout(token), new HttpCallback() {
+                @Override
+                public void success(JSONObject response) {}
+
+                @Override
+                public void failure(JSONObject response) {}
+            });
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -357,8 +385,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void success(JSONObject response) {
                         List<Product> productList = JSONHelper.parseProducts(response);
+                        AuthHelper.saveProductCount(productList.size(), getContext());
                         listView.setAdapter(new ProductListAdaptor(productList));
-
                     }
 
                     @Override

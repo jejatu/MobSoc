@@ -29,6 +29,17 @@ public class JSONHelper {
         return json;
     }
 
+    public static JSONObject createLogout(String token) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     public static JSONObject createAddProduct(String token, String name, String description) {
         JSONObject json = new JSONObject();
         try {

@@ -89,6 +89,16 @@ class Engine():
             users.append(user)
         return users
 
+    def parse_users_external(self, results):
+        users = []
+        for result in results:
+            user = {}
+            user["user_id"] = str(result[0])
+            user["name"] = result[1]
+            user["activated"] = str(result[6])
+            users.append(user)
+        return users
+
     def parse_session(self, results):
         sessions = []
         for result in results:
@@ -125,6 +135,17 @@ class Engine():
             products.append(product)
         return products
 
+    def is_activated(self, token):
+        user = self.get_user_by_token(token)
+
+        if not user:
+            return False
+
+        if user["activated"] != "1":
+            return False
+
+        return True
+
     def get_user(self, name, family_name):
         results = self.execute_sql("SELECT * FROM users WHERE name=? AND family_name=?", (name, family_name,))["data"]
 
@@ -142,9 +163,34 @@ class Engine():
         return self.parse_users(user_data)[0]
 
     def get_products(self, token):
+        if not self.is_activated(token):
+            return []
+
         results = self.execute_sql("SELECT * FROM products WHERE family_id = \
                                     (SELECT family_id FROM sessions WHERE token = ?)", (token,))["data"]
         return self.parse_products(results)
+
+    def get_members(self, token):
+        user = self.get_user_by_token(token);
+
+        if user["role"] != 0:
+            return []
+
+        results = self.execute_sql("SELECT * FROM users WHERE family_name = \
+                                    (SELECT family_name FROM families WHERE family_id = \
+                                    (SELECT family_id FROM sessions WHERE token = ?))")["data"]
+
+        return self.parse_users_external(results)
+
+    def accept_member(self, token, member_id):
+        user = self.get_user_by_token(token);
+
+        if user["role"] != "0":
+            return None
+
+        results = self.execute_sql("UPDATE users SET activated=1 WHERE member_id=? AND family_name=?", (member_id, user["family_name"]))
+
+        return results
 
     def add_session(self, user, token):
         self.execute_sql("DELETE FROM sessions WHERE user_id=?", (user["user_id"],))
@@ -185,11 +231,14 @@ class Engine():
         return user_id
 
     def add_product(self, token, name, description):
-        user_data = self.execute_sql("SELECT * FROM users WHERE user_id = \
-                                (SELECT user_id FROM sessions WHERE token = ?)", (token,))["data"]
-        if len(user_data) == 0:
+        user = self.get_user_by_token(token)
+
+        if not user:
             return None
-        user = self.parse_users(user_data)[0]
+
+        if user["activated"] != "1":
+            return None
+
         family_data = self.execute_sql("SELECT * FROM families WHERE family_id = \
                                 (SELECT family_id FROM sessions WHERE token = ?)", (token,))["data"]
         if len(family_data) == 0:

@@ -1,10 +1,15 @@
 package com.wishlist.wishlist;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -41,14 +46,24 @@ public class LoginActivity extends AppCompatActivity {
         requestPermissions();
     }
 
+    private boolean hasPermission(String permission)
+    {
+        int result = getApplicationContext().checkCallingOrSelfPermission(permission);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
     private void requestPermissions() {
-        String[] permissions = new String[3];
+        if (!hasPermission(Manifest.permission.INTERNET) ||
+            !hasPermission(Manifest.permission.ACCESS_NETWORK_STATE) ||
+            !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            String[] permissions = new String[3];
 
-        permissions[0] = Manifest.permission.INTERNET;
-        permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
-        permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            permissions[0] = Manifest.permission.INTERNET;
+            permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
+            permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-        ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
+            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
+        }
     }
 
     @Override
