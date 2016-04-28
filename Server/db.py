@@ -128,7 +128,7 @@ class Engine():
             product["description"] = result[2]
             product["adder"] = result[3]
             product["add_date"] = result[4]
-            product["status"] = results[6]
+            product["status"] = result[6]
             product["has_image"] = 0
             path = os.path.join(DEFAULT_IMAGES_PATH, product["product_id"] + ".jpg")
             if os.path.isfile(path):
@@ -173,7 +173,7 @@ class Engine():
 
     def get_members(self, token):
         user = self.get_user_by_token(token);
-        
+
         if not user:
             return []
 
@@ -188,7 +188,7 @@ class Engine():
 
     def accept_member(self, token, member_id):
         user = self.get_user_by_token(token);
-        
+
         if not user:
             return None
 
@@ -236,16 +236,16 @@ class Engine():
         if user_id == -1:
             return None
         return user_id
-        
+
     def set_purchased(self, token, product_id):
         if not self.is_activated(token):
             return None
-            
+
         if self.has_product(token, product_id):
             return None
-            
+
         results = self.execute_sql("UPDATE products SET status=1 WHERE product_id=?", (product_id,))
-        
+
         return results
 
     def add_product(self, token, name, description):
@@ -263,7 +263,7 @@ class Engine():
             return None
         family = self.parse_families(family_data)[0]
         date = str(datetime.now())
-        product_id = self.execute_sql("INSERT INTO products VALUES(NULL, ?, ?, ?, ?, ?)", (name, description, user["name"], date, family["family_id"]))["id"]
+        product_id = self.execute_sql("INSERT INTO products VALUES(NULL, ?, ?, ?, ?, ?, 0)", (name, description, user["name"], date, family["family_id"]))["id"]
         return product_id
 
     def has_product(self, token, product_id):

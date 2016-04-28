@@ -52,6 +52,18 @@ public class JSONHelper {
         return json;
     }
 
+    public static JSONObject createPurchase(String token, String product_id) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("product_id", product_id);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+
     public static JSONObject createRegisterFamily(String name, String email, String familyName, String password) {
         JSONObject json = new JSONObject();
         try {

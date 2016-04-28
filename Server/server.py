@@ -173,7 +173,7 @@ def add_product():
     envelope["product_id"] = product_id;
 
     return json.dumps(envelope), 200
-    
+
 @app.route("/purchase", methods = ["POST"])
 def purchase():
     data = request.get_json(force=True)
@@ -182,12 +182,12 @@ def purchase():
         product_id = data["product_id"]
     except:
         return "", 400
-        
+
     results = engine.set_purchased(token, product_id)
-    
+
     if not results:
         return "", 500
-    
+
     return "", 204
 
 def allowed_file(filename):
