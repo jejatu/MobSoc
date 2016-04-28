@@ -14,6 +14,7 @@
 * ~~Log out~~
 * ~~Notification when product added~~ (Not properly tested)
 * Admin activity for accepting members
+* Sending product status to server
 * Get menu buttons to work
 * Scrolling products when list goes out of screen
 * I will provide you a seperate activity in which you will find list of famalies(Dummy), then you can fetch the data from server and you can show there.
