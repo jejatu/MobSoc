@@ -241,7 +241,7 @@ class Engine():
         if not self.is_activated(token):
             return None
 
-        if self.has_product(token, product_id):
+        if not self.has_product(token, product_id):
             return None
 
         results = self.execute_sql("UPDATE products SET status=1 WHERE product_id=?", (product_id,))

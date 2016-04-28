@@ -40,7 +40,7 @@ public class JSONHelper {
         return json;
     }
 
-    public static JSONObject createAddProduct(String token, String name, String description) {
+    public static JSONObject createAddProduct(String name, String description) {
         JSONObject json = new JSONObject();
         try {
             json.put("name", name);
@@ -52,7 +52,7 @@ public class JSONHelper {
         return json;
     }
 
-    public static JSONObject createPurchase(String token, String product_id) {
+    public static JSONObject createPurchase(String product_id) {
         JSONObject json = new JSONObject();
         try {
             json.put("product_id", product_id);
@@ -125,6 +125,7 @@ public class JSONHelper {
                 String add_date = product.getString("add_date");
                 String product_id = product.getString("product_id");
                 String has_image = product.getString("has_image");
+                String status = product.getString("status");
 
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH);
                 Date date = new Date();
@@ -140,7 +141,12 @@ public class JSONHelper {
                 if (has_image.equals("1")) {
                     hasImage = true;
                 }
-                productList.add(new Product(name, description, adder, product_id, date, hasImage, true));
+
+                boolean purchased = false;
+                if (status.equals("1")) {
+                    purchased = true;
+                }
+                productList.add(new Product(name, description, adder, product_id, date, hasImage, purchased));
             }
         }
         catch (JSONException e) {

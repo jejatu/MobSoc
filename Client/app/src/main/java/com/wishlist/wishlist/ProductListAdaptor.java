@@ -7,8 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,13 +74,14 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         public TextView rowDate;
         public TextView rowAdderName;
         public ImageView productImage;
+        public CheckBox checkBox;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
 
         if (convertView == null) {
-            Context context = parent.getContext();
+            final Context context = parent.getContext();
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.product_row, parent, false);
 
@@ -87,6 +91,25 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
             viewHolder.rowProductDescription=(TextView)convertView.findViewById(R.id.product_description);
             viewHolder.rowDate=(TextView)convertView.findViewById(R.id.added_date);
             viewHolder.productImage=(ImageView) convertView.findViewById(R.id.thumbnailViewImage);
+            viewHolder.checkBox =(CheckBox) convertView.findViewById(R.id.isPurchased);
+            final int productPosition = position;
+            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (viewHolder.checkBox.isChecked()) {
+                        String productId = productList.get(productPosition).getServerId();
+                        if (productId != null) {
+                            String token = AuthHelper.getAuthToken(context);
+                            HttpClient.sendPostRequest("purchase?token=" + token, JSONHelper.createPurchase(productId), new HttpCallback() {
+                                @Override
+                                public void success(JSONObject response) {}
+
+                                @Override
+                                public void failure(JSONObject response) {}
+                            });
+                        }
+                    }
+                }
+            });
             convertView.setTag(viewHolder);
         } else
             viewHolder = (ViewHolder)convertView.getTag();
@@ -94,6 +117,7 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         viewHolder.rowProductName.setText(productList.get(position).getProductName());
         viewHolder.rowProductDescription.setText(productList.get(position).getProductDescription());
         viewHolder.rowAdderName.setText(productList.get(position).getProductAdder());
+        viewHolder.checkBox.setChecked(productList.get(position).isStatus());
 
         if (productList.get(position).ownsImage()) {
             String productId = productList.get(position).getServerId();

@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         if (!name.isEmpty() && !description.isEmpty()) {
             final String token = AuthHelper.getAuthToken(getApplicationContext());
 
-            HttpClient.sendPostRequest("products?token=" + token, JSONHelper.createAddProduct(token, name, description), new HttpCallback() {
+            HttpClient.sendPostRequest("products?token=" + token, JSONHelper.createAddProduct(name, description), new HttpCallback() {
                 @Override
                 public void success(JSONObject response) {
                     Toast.makeText(getApplicationContext(), "Product added!", Toast.LENGTH_SHORT).show();
