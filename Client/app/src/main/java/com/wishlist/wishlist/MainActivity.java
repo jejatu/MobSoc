@@ -137,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
     }
     // copied from http://stackoverflow.com/questions/20887270/android-periodically-polling-a-server-and-displaying-response-as-a-notificatio
     public void setUpAlarm(Application context) {
-        int time = 60000;
+        int minutes = 10;
+        int time = 60000 * minutes;
         Intent intent = new Intent(context, NotificationService.class);
         PendingIntent pending_intent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
