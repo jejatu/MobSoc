@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS products(
   adder TEXT,
   add_date TEXT,
   family_id INTEGER,
+  status INTEGER,
   FOREIGN KEY(family_id) REFERENCES families(family_id) ON DELETE CASCADE,
   UNIQUE(product_id)
 );
