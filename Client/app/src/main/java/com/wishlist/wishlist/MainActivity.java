@@ -33,6 +33,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -338,6 +340,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return true;
+        }else if(id==R.id.addMember){
+            Intent intent= new Intent(this, MemberRequests.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
@@ -406,6 +411,23 @@ public class MainActivity extends AppCompatActivity {
                 //Log.d("List size and name", productList.size() + " name = "+ productList.get(2).getProductName() );
 
                 String token = AuthHelper.getAuthToken(getContext());
+
+
+//                CheckBox checkBox=(CheckBox) getContext().fin
+//                cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+//
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView,
+//                                                 boolean isChecked) {
+//                        if(isChecked){
+//                            cb.setChecked(false);
+//                            // Code to display your message.
+//                        }
+//                    }
+//                });
+
+
+
 
                 refreshProducts();
                 //end list view work
