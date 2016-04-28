@@ -43,6 +43,8 @@
         <service
             android:name=".NotificationService"
             android:exported="false" />
+
+        <activity android:name=".MemberRequests"></activity>
     </application>
 
 </manifest>

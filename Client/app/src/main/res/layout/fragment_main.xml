@@ -20,7 +20,7 @@
         <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/product_listview" />
+            android:id="@+id/product_listview" />
 
 
     </LinearLayout>
