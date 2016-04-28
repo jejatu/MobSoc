@@ -6,6 +6,7 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkIfLoggedIn(getApplicationContext());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -90,6 +92,51 @@ public class MainActivity extends AppCompatActivity {
         setUpAlarm(getApplication());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+       // Toast.makeText(getApplicationContext(), "Main On resume", Toast.LENGTH_SHORT).show();
+       // checkIfLoggedIn(getApplicationContext());
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            Toast.makeText(getApplicationContext(), " Clossing App", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+       // Toast.makeText(getApplicationContext(), " Main On restart", Toast.LENGTH_SHORT).show();
+        //checkIfLoggedIn(getApplicationContext());
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            Toast.makeText(getApplicationContext(), " Clossing App", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //Toast.makeText(getApplicationContext(), " Back Pressed", Toast.LENGTH_SHORT).show();
+        SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
+        String username = sp.getString("username", null);
+        finish();
+
+    }
+    public void checkIfLoggedIn(Context context){
+
+        SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
+        String username = sp.getString("username", null);
+        if(username == null && getIntent().getBooleanExtra("EXIT", false)){
+
+            Toast.makeText(getApplicationContext(), " Clossing App", Toast.LENGTH_SHORT).show();
+            finish();
+
+        }else if(username == null){
+            Intent intent= new Intent(context,LoginActivity.class );
+            startActivity(intent);
+        }
+
+    }
     // copied from http://stackoverflow.com/questions/20887270/android-periodically-polling-a-server-and-displaying-response-as-a-notificatio
     public void setUpAlarm(Application context) {
         int time = 60000;
@@ -280,11 +327,14 @@ public class MainActivity extends AppCompatActivity {
             String token = AuthHelper.getAuthToken(getApplicationContext());
             HttpClient.sendPostRequest("logout", JSONHelper.createLogout(token), new HttpCallback() {
                 @Override
-                public void success(JSONObject response) {}
+                public void success(JSONObject response) {
+
+                }
 
                 @Override
                 public void failure(JSONObject response) {}
             });
+
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return true;

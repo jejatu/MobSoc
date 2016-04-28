@@ -1,9 +1,11 @@
 package com.wishlist.wishlist;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -42,14 +45,49 @@ public class LoginActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+        //checkIfLoggedIn(getApplicationContext());
 
         requestPermissions();
     }
+    @Override
+    public void onBackPressed() {
+
+        //Toast.makeText(getApplicationContext(), " Back Pressed", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("EXIT", true);
+        startActivity(intent);
+        finish();
+
+
+    }
+//    public void checkIfLoggedIn(Context context){
+//        SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
+//        String username = sp.getString("username", null);
+//        if(username != null ){
+//            finish();
+//        }
+//    }
 
     private boolean hasPermission(String permission)
     {
         int result = getApplicationContext().checkCallingOrSelfPermission(permission);
         return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Toast.makeText(getApplicationContext(), "Login Onresume", Toast.LENGTH_SHORT).show();
+        //checkIfLoggedIn(getApplicationContext());
+
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+       // Toast.makeText(getApplicationContext(), "Login onrestart", Toast.LENGTH_SHORT).show();
+       // checkIfLoggedIn(getApplicationContext());
+
     }
 
     private void requestPermissions() {
@@ -111,7 +149,17 @@ public class LoginActivity extends AppCompatActivity {
                     String token = JSONHelper.parseToken(response);
                     AuthHelper.saveAuthToken(token, getApplicationContext());
                     AuthHelper.saveInfo(name, family_name);
-                    Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Welcome "+ name, Toast.LENGTH_SHORT).show();
+
+
+                    /* Saving Log in State*/
+
+                    SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("username", name);
+                    editor.commit();
+                    //------------------
+
                     startActivity(intent);
                 }
 
