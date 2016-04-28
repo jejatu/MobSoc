@@ -109,7 +109,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:text="Have famlily group? Join now"
+            android:text="Have family group? Join now!"
             android:gravity="center"
             android:textSize="16dip"
             android:textColor="#ffffff"

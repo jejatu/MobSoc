@@ -24,7 +24,6 @@ public class JSONHelper {
             json.put("password", password);
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return json;
     }
@@ -35,7 +34,6 @@ public class JSONHelper {
             json.put("token", token);
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return json;
     }
@@ -47,7 +45,6 @@ public class JSONHelper {
             json.put("description", description);
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return json;
     }
@@ -58,11 +55,31 @@ public class JSONHelper {
             json.put("product_id", product_id);
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return json;
     }
 
+    public static JSONObject createAddMember(String member_id) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("member_id", member_id);
+            json.put("action", "add");
+        }
+        catch (JSONException e) {
+        }
+        return json;
+    }
+
+    public static JSONObject createDeleteMember(String member_id) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("member_id", member_id);
+            json.put("action", "delete");
+        }
+        catch (JSONException e) {
+        }
+        return json;
+    }
 
     public static JSONObject createRegisterFamily(String name, String email, String familyName, String password) {
         JSONObject json = new JSONObject();
@@ -73,7 +90,6 @@ public class JSONHelper {
             json.put("password", password);
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return json;
     }
@@ -86,7 +102,6 @@ public class JSONHelper {
             json.put("password", password);
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return json;
     }
@@ -97,7 +112,6 @@ public class JSONHelper {
             id = response.getString("product_id");
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return id;
     }
@@ -108,7 +122,6 @@ public class JSONHelper {
             token = response.getString("token");
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return token;
     }
@@ -150,8 +163,27 @@ public class JSONHelper {
             }
         }
         catch (JSONException e) {
-            e.printStackTrace();
         }
         return productList;
+    }
+
+    public static List<Member> parseMembers(JSONObject response) {
+        List<Member> list = new ArrayList();
+        try {
+            JSONArray members = response.getJSONArray("members");
+            for (int i = 0; i < members.length(); i++) {
+                JSONObject product = members.getJSONObject(i);
+                String user_id = product.getString("user_id");
+                String name = product.getString("name");
+                String activated = product.getString("activated");
+
+                if (activated.equals("0")) {
+                    list.add(new Member(name, user_id));
+                }
+            }
+        }
+        catch (JSONException e) {
+        }
+        return list;
     }
 }

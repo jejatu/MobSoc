@@ -74,8 +74,9 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         public TextView rowDate;
         public TextView rowAdderName;
         public ImageView productImage;
-        public CheckBox checkBox;
+        public CheckBox rowCheckBox;
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder viewHolder;
@@ -91,11 +92,11 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
             viewHolder.rowProductDescription=(TextView)convertView.findViewById(R.id.product_description);
             viewHolder.rowDate=(TextView)convertView.findViewById(R.id.added_date);
             viewHolder.productImage=(ImageView) convertView.findViewById(R.id.thumbnailViewImage);
-            viewHolder.checkBox =(CheckBox) convertView.findViewById(R.id.isPurchased);
+            viewHolder.rowCheckBox =(CheckBox) convertView.findViewById(R.id.isPurchased);
             final int productPosition = position;
-            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+            viewHolder.rowCheckBox.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    if (viewHolder.checkBox.isChecked()) {
+                    if (viewHolder.rowCheckBox.isChecked()) {
                         String productId = productList.get(productPosition).getServerId();
                         if (productId != null) {
                             String token = AuthHelper.getAuthToken(context);
@@ -107,6 +108,7 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
                                 public void failure(JSONObject response) {}
                             });
                         }
+                        viewHolder.rowCheckBox.setEnabled(false);
                     }
                 }
             });
@@ -117,7 +119,11 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
         viewHolder.rowProductName.setText(productList.get(position).getProductName());
         viewHolder.rowProductDescription.setText(productList.get(position).getProductDescription());
         viewHolder.rowAdderName.setText(productList.get(position).getProductAdder());
-        viewHolder.checkBox.setChecked(productList.get(position).isStatus());
+        viewHolder.rowCheckBox.setChecked(productList.get(position).isStatus());
+
+        if (viewHolder.rowCheckBox.isChecked()) {
+            viewHolder.rowCheckBox.setEnabled(false);
+        }
 
         if (productList.get(position).ownsImage()) {
             String productId = productList.get(position).getServerId();

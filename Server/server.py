@@ -130,10 +130,16 @@ def accept_member():
     try:
         token = request.args.get("token")
         member_id = data["member_id"]
+        action = data["action"]
     except:
         return "", 400
 
-    result = engine.accept_member(token, member_id)
+    if action == "add":
+        result = engine.accept_member(token, member_id)
+    elif action == "delete":
+        result = engine.delete_member(token, member_id)
+    else:
+        return "", 400
 
     if not result:
         return "", 500

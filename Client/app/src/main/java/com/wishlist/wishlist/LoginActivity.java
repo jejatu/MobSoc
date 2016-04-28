@@ -165,8 +165,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void failure(JSONObject response) {
-                    Toast.makeText(getApplicationContext(), "Login failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
-                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Couldn't log in.", Toast.LENGTH_SHORT).show();
                 }
             });
         }

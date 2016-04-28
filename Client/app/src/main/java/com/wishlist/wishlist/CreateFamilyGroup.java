@@ -54,16 +54,14 @@ public class CreateFamilyGroup extends AppCompatActivity {
 
                     @Override
                     public void failure(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Login failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
+                        Toast.makeText(getApplicationContext(), "Couldn't log in.", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void failure(JSONObject response) {
-                Toast.makeText(getApplicationContext(), "Registering family failed... continuing for debugging purposes.", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                Toast.makeText(getApplicationContext(), "Registeration failed.", Toast.LENGTH_SHORT).show();
             }
         });
     }

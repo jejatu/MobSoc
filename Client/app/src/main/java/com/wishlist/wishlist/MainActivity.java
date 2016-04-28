@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
        // Toast.makeText(getApplicationContext(), "Main On resume", Toast.LENGTH_SHORT).show();
        // checkIfLoggedIn(getApplicationContext());
         if (getIntent().getBooleanExtra("EXIT", false)) {
-            Toast.makeText(getApplicationContext(), " Clossing App", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -111,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
        // Toast.makeText(getApplicationContext(), " Main On restart", Toast.LENGTH_SHORT).show();
         //checkIfLoggedIn(getApplicationContext());
         if (getIntent().getBooleanExtra("EXIT", false)) {
-            Toast.makeText(getApplicationContext(), " Clossing App", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -129,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
         String username = sp.getString("username", null);
         if(username == null && getIntent().getBooleanExtra("EXIT", false)){
-
-            Toast.makeText(getApplicationContext(), " Clossing App", Toast.LENGTH_SHORT).show();
             finish();
 
         }else if(username == null){
@@ -329,9 +325,7 @@ public class MainActivity extends AppCompatActivity {
             String token = AuthHelper.getAuthToken(getApplicationContext());
             HttpClient.sendPostRequest("logout", JSONHelper.createLogout(token), new HttpCallback() {
                 @Override
-                public void success(JSONObject response) {
-
-                }
+                public void success(JSONObject response) {}
 
                 @Override
                 public void failure(JSONObject response) {}
@@ -390,18 +384,6 @@ public class MainActivity extends AppCompatActivity {
             View rootView=inflater.inflate(R.layout.fragment_main, container, false);
 
             if(getArguments().getInt(ARG_SECTION_NUMBER)==1){
-
-                FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab1);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                       Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                             .setAction("Action", null).show();
-                        newInstance(2);
-                        Log.d("Test ","Passssed");
-                    }
-                });
-
                 rootView=inflater.inflate(R.layout.fragment_main, container, false);
                 //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
@@ -409,25 +391,6 @@ public class MainActivity extends AppCompatActivity {
                 //List view work below
                 listView = (ListView)rootView.findViewById(R.id.product_listview);
                 //Log.d("List size and name", productList.size() + " name = "+ productList.get(2).getProductName() );
-
-                String token = AuthHelper.getAuthToken(getContext());
-
-
-//                CheckBox checkBox=(CheckBox) getContext().fin
-//                cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-//
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton buttonView,
-//                                                 boolean isChecked) {
-//                        if(isChecked){
-//                            cb.setChecked(false);
-//                            // Code to display your message.
-//                        }
-//                    }
-//                });
-
-
-
 
                 refreshProducts();
                 //end list view work

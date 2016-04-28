@@ -177,12 +177,12 @@ class Engine():
         if not user:
             return []
 
-        if user["role"] != 0:
+        if user["role"] != "0":
             return []
 
         results = self.execute_sql("SELECT * FROM users WHERE family_name = \
                                     (SELECT family_name FROM families WHERE family_id = \
-                                    (SELECT family_id FROM sessions WHERE token = ?))")["data"]
+                                    (SELECT family_id FROM sessions WHERE token = ?))", (token,))["data"]
 
         return self.parse_users_external(results)
 
@@ -195,7 +195,20 @@ class Engine():
         if user["role"] != "0":
             return None
 
-        results = self.execute_sql("UPDATE users SET activated=1 WHERE member_id=? AND family_name=?", (member_id, user["family_name"]))
+        results = self.execute_sql("UPDATE users SET activated=1 WHERE user_id=? AND family_name=?", (member_id, user["family_name"]))
+
+        return results
+
+    def delete_member(self, token, member_id):
+        user = self.get_user_by_token(token);
+
+        if not user:
+            return None
+
+        if user["role"] != "0":
+            return None
+
+        results = self.execute_sql("DELETE FROM users WHERE user_id=? AND family_name=?", (member_id, user["family_name"]))
 
         return results
 
