@@ -149,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                     String token = JSONHelper.parseToken(response);
                     AuthHelper.saveAuthToken(token, getApplicationContext());
                     AuthHelper.saveInfo(name, family_name, getApplicationContext());
-                    Toast.makeText(getApplicationContext(), "Welcome "+ name, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Welcome "+ name + "!", Toast.LENGTH_SHORT).show();
 
                     /* Saving Log in State*/
 

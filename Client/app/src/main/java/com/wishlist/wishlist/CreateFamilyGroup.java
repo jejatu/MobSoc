@@ -50,9 +50,11 @@ public class CreateFamilyGroup extends AppCompatActivity {
                     public void success(JSONObject response) {
                         String token = JSONHelper.parseToken(response);
                         AuthHelper.saveAuthToken(token, getApplicationContext());
-                        Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+                        AuthHelper.saveInfo(name, familyName, getApplicationContext());
+                        Toast.makeText(getApplicationContext(), "Welcome "+ name + "!", Toast.LENGTH_SHORT).show();
 
                         /* Saving Log in State*/
+
                         SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sp.edit();
                         editor.putString("username", name);
