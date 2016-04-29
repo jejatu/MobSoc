@@ -27,6 +27,7 @@ public class MemberRequests extends AppCompatActivity {
             public void success(JSONObject response) {
                 List<Member> memberList = JSONHelper.parseMembers(response);
                 memberListView.setAdapter(new MemberListAdaptor(memberList));
+
             }
 
             @Override

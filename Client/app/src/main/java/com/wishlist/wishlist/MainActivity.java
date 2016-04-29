@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
        // Toast.makeText(getApplicationContext(), "Main On resume", Toast.LENGTH_SHORT).show();
-       // checkIfLoggedIn(getApplicationContext());
+       checkIfLoggedIn(getApplicationContext());
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
         }
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart(){
         super.onRestart();
        // Toast.makeText(getApplicationContext(), " Main On restart", Toast.LENGTH_SHORT).show();
-        //checkIfLoggedIn(getApplicationContext());
+        checkIfLoggedIn(getApplicationContext());
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
         }
@@ -439,6 +440,7 @@ public class MainActivity extends AppCompatActivity {
                 refreshProducts();
             }
         }
+
 
         private void refreshProducts() {
             if (listView != null) {
