@@ -1,6 +1,8 @@
 package com.wishlist.wishlist;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -49,6 +51,14 @@ public class CreateFamilyGroup extends AppCompatActivity {
                         String token = JSONHelper.parseToken(response);
                         AuthHelper.saveAuthToken(token, getApplicationContext());
                         Toast.makeText(getApplicationContext(), token, Toast.LENGTH_SHORT).show();
+
+                        /* Saving Log in State*/
+                        SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("username", name);
+                        editor.commit();
+                        //------------------
+
                         startActivity(intent);
                     }
 

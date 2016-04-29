@@ -54,7 +54,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static final int MY_PERMISSIONS_INT = 13;
     //public static int tabNumber=1;
 
     /**
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private Bitmap mCurrentPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,44 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         setUpAlarm(getApplication());
+
+        requestPermissions();
+    }
+
+    private boolean hasPermission(String permission)
+    {
+        int result = getApplicationContext().checkCallingOrSelfPermission(permission);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermissions() {
+        if (!hasPermission(Manifest.permission.INTERNET) ||
+                !hasPermission(Manifest.permission.ACCESS_NETWORK_STATE) ||
+                !hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            String[] permissions = new String[3];
+
+            permissions[0] = Manifest.permission.INTERNET;
+            permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
+            permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+            ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_INT: {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Wishlist", "Permission " + i + " granted!");
+                    }
+                    else {
+                        Log.d("Wishlist", "Permission " + i + " denied...");
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -157,9 +196,8 @@ public class MainActivity extends AppCompatActivity {
             mImageHeight=imageView.getHeight();
             mImageWidth=imageView.getWidth();
             parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        }else {
-
+        }
+        else {
             parms = new LinearLayout.LayoutParams(mImageWidth, mImageHeight);
             parms.gravity= Gravity.CENTER_HORIZONTAL;
             mImageWidth=0;
@@ -172,8 +210,6 @@ public class MainActivity extends AppCompatActivity {
     public static int mImageWidthList=0;
     public static int mImageHeightList=0;
     public static void zoomImageProductList(View view){
-
-
         ImageView imageView=(ImageView) view.findViewById(R.id.thumbnailViewImage);
         LinearLayout.LayoutParams parms;
 
@@ -183,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
 
             parms = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 600);
             parms.setMargins(0,130,0,30);
-
 
         }else {
 
@@ -213,9 +248,9 @@ public class MainActivity extends AppCompatActivity {
                 public void success(JSONObject response) {
                     Toast.makeText(getApplicationContext(), "Product added!", Toast.LENGTH_SHORT).show();
 
-                    if (mCurrentPhotoPath != null && !mCurrentPhotoPath.isEmpty()) {
+                    if (mCurrentPhoto != null) {
                         String productId = JSONHelper.parseProductId(response);
-                        HttpClient.sendImage("image/" + productId + "?token=" + token, mCurrentPhotoPath, new HttpCallback() {
+                        HttpClient.sendImage("image/" + productId + "?token=" + token, mCurrentPhoto, new HttpCallback() {
                             @Override
                             public void success(JSONObject response) {
                                 Toast.makeText(getApplicationContext(), "Image uploaded!", Toast.LENGTH_SHORT).show();
@@ -243,22 +278,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //Bundle extras = data.getExtras();
-            //Bitmap imageBitmap = (Bitmap) extras.get("data");
-            //ImageView mImageView=(ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
-            //mImageView.setImageBitmap(imageBitmap);
-            System.out.println("Photo Path2"+mCurrentPhotoPath);
-            File imgFile = new  File(mCurrentPhotoPath);
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            ImageView mImageView=(ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
+            mImageView.setImageBitmap(imageBitmap);
+            mCurrentPhoto = imageBitmap;
+            /*if (mCurrentPhotoPath != null) {
+                File imgFile = new File(mCurrentPhotoPath);
 
-            if(imgFile.exists()){
+                if (imgFile.exists()) {
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
 
-                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    ImageView myImage = (ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
 
-                ImageView myImage = (ImageView) findViewById(R.id.thumbnailImageViewAddProduct);
+                    myImage.setImageBitmap(myBitmap);
 
-                myImage.setImageBitmap(myBitmap);
-
-            }
+                }
+            }*/
         }
     }
     public void dispatchTakePictureIntent(View view) {
@@ -269,21 +305,7 @@ public class MainActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                System.out.println("Error in creating image: "+ ex.getMessage()+ex.getStackTrace());
-                Toast.makeText(getApplicationContext(), "Error in creating image file", Toast.LENGTH_LONG).show();
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
     public String mCurrentPhotoPath;
@@ -331,6 +353,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void failure(JSONObject response) {}
             });
+
+            SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.remove("username");
+            editor.commit();
 
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);

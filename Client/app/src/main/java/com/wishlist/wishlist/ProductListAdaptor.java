@@ -130,7 +130,7 @@ public class ProductListAdaptor implements android.widget.ListAdapter {
             if (productId != null) {
                 String imageUrl = "image/" + productId;
                 String token = AuthHelper.getAuthToken(parent.getContext());
-                HttpClient.downloadImage(imageUrl + "?token=" + token, AuthHelper.getName(), AuthHelper.getFamilyName(), productId, viewHolder.productImage);
+                HttpClient.downloadImage(imageUrl + "?token=" + token, AuthHelper.getName(parent.getContext()), AuthHelper.getFamilyName(parent.getContext()), productId, viewHolder.productImage);
             }
         }
 

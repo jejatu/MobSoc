@@ -8,9 +8,6 @@ import android.preference.PreferenceManager;
  * Created by jeret on 22.4.2016.
  */
 public class AuthHelper {
-    private static String name_;
-    private static String familyName_;
-
     public static void saveAuthToken(String token, Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = pref.edit();
@@ -38,16 +35,23 @@ public class AuthHelper {
         return count;
     }
 
-    public static void saveInfo(String name, String familyName) {
-        name_ = name;
-        familyName_ = familyName;
+    public static void saveInfo(String name, String familyName, Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("name", name);
+        editor.putString("familyName", familyName);
+        editor.commit();
     }
 
-    public static String getName() {
-        return name_;
+    public static String getName(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String name = pref.getString("name", "");
+        return name;
     }
 
-    public static String getFamilyName() {
-        return familyName_;
+    public static String getFamilyName(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String familyName = pref.getString("familyName", "");
+        return familyName;
     }
 }

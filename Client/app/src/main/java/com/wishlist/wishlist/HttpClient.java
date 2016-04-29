@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -36,8 +37,8 @@ public class HttpClient {
         new HttpRequestTask(responseCallback).execute("POST", subUrl, data.toString());
     }
 
-    public static void sendImage(String subUrl, String imagePath, HttpCallback responseCallback) {
-        new HttpImageTask(responseCallback).execute(subUrl, imagePath);
+    public static void sendImage(String subUrl, Bitmap image, HttpCallback responseCallback) {
+        new HttpImageTask(responseCallback).execute(subUrl, image);
     }
 
     // copied from http://stackoverflow.com/questions/15549421/how-to-download-and-save-an-image-in-android
@@ -49,7 +50,9 @@ public class HttpClient {
                 String path = file.getAbsolutePath();
                 if (path != null) {
                     Bitmap b = BitmapFactory.decodeFile(path);
-                    imageView.setImageBitmap(b);
+                    int width = 400;
+                    int height = (int)((float)width * ((float)b.getHeight() / (float)b.getWidth()));
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(b, width, height, false));
                 }
             } else {
                 new GetImages(serverUrl + subUrl, imageView, imageName).execute();
@@ -57,13 +60,12 @@ public class HttpClient {
         }
     }
 
-    public static HttpResponse makeImage(String subUrl, String imagePath) {
+    public static HttpResponse makeImage(String subUrl, Bitmap image) {
         // Copied mostly from http://stackoverflow.com/questions/26686806/httpurlconnection-to-send-image-audio-and-video-files-with-parameter-may-stri
         StringBuffer sb = new StringBuffer();
         int statusCode = 0;
 
         String fileName = "image.jpg";
-        File sourceFile = new File(imagePath);
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****";
@@ -74,7 +76,9 @@ public class HttpClient {
         URL url;
         HttpURLConnection con = null;
         try {
-            FileInputStream fileInputStream = new FileInputStream(sourceFile);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            InputStream bitmapStream = new ByteArrayInputStream(stream.toByteArray());
             url = new URL(serverUrl + subUrl);
             con = (HttpURLConnection) url.openConnection();
             con.setConnectTimeout(timeout);
@@ -94,18 +98,18 @@ public class HttpClient {
             dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + fileName + "\"" + lineEnd);
             dos.writeBytes(lineEnd);
             // create a buffer of maximum size
-            bytesAvailable = fileInputStream.available();
+            bytesAvailable = bitmapStream.available();
             bufferSize = Math.min(bytesAvailable, maxBufferSize);
             buffer = new byte[bufferSize];
             // read file and write it into form...
-            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            bytesRead = bitmapStream.read(buffer, 0, bufferSize);
 
             while (bytesRead > 0)
             {
                 dos.write(buffer, 0, bufferSize);
-                bytesAvailable = fileInputStream.available();
+                bytesAvailable = bitmapStream.available();
                 bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                bytesRead = bitmapStream.read(buffer, 0, bufferSize);
             }
 
             dos.writeBytes(lineEnd);
@@ -215,7 +219,7 @@ public class HttpClient {
         protected void onProgressUpdate(Void... values) {}
     }
 
-    private static class HttpImageTask extends AsyncTask<String, Void, HttpResponse> {
+    private static class HttpImageTask extends AsyncTask<Object, Void, HttpResponse> {
         public HttpCallback delegate = null;
 
         public HttpImageTask(HttpCallback response) {
@@ -223,9 +227,9 @@ public class HttpClient {
         }
 
         @Override
-        protected HttpResponse doInBackground(String... params) {
+        protected HttpResponse doInBackground(Object... params) {
             if (params.length > 0)
-                return makeImage(params[0], params[1]);
+                return makeImage((String)params[0], (Bitmap)params[1]);
             return new HttpResponse(500);
         }
 
