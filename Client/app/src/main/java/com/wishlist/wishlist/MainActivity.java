@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void checkIfLoggedIn(Context context){
-
         SharedPreferences sp = getApplicationContext().getSharedPreferences("loginSaved", Context.MODE_PRIVATE);
         String username = sp.getString("username", null);
         if(username == null && getIntent().getBooleanExtra("EXIT", false)){
@@ -179,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
     }
     // copied from http://stackoverflow.com/questions/20887270/android-periodically-polling-a-server-and-displaying-response-as-a-notificatio
     public void setUpAlarm(Application context) {
+        // Creates a repeating alarm that starts a notification service every 10 minutes
+        // The notification service makes a get requests for products to the server
+        // If products have increased since last request a notification is created
         int minutes = 10;
         int time = 60000 * minutes;
         Intent intent = new Intent(context, NotificationService.class);
@@ -192,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
     public static int mImageWidth=0;
     public static int mImageHeight=0;
     public static void zoomImageAddProduct(View view){
-
+        // When image is clicked on the add product view it is zoomed
         ImageView imageView=(ImageView) view.findViewById(R.id.thumbnailImageViewAddProduct);
         LinearLayout.LayoutParams parms;
         if(ViewGroup.LayoutParams.MATCH_PARENT!=imageView.getWidth() && mImageWidth==0){
@@ -213,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
     public static int mImageWidthList=0;
     public static int mImageHeightList=0;
     public static void zoomImageProductList(View view){
+        // When image is clicked on the main view it is zoomed
         ImageView imageView=(ImageView) view.findViewById(R.id.thumbnailViewImage);
         LinearLayout.LayoutParams parms;
 
@@ -238,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void addProduct(View view) {
+        // This function happens when add product button is pressed
+        // Send a post rqeuest with the product information to the server
         EditText input_product_name = (EditText) findViewById(R.id.input_product_name);
         EditText input_product_description = (EditText) findViewById(R.id.input_product_description);
         final String name = input_product_name.getText().toString();
@@ -280,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Used to get the product image
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");

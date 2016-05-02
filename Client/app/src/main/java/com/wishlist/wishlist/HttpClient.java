@@ -44,6 +44,8 @@ public class HttpClient {
 
     // copied from http://stackoverflow.com/questions/15549421/how-to-download-and-save-an-image-in-android
     public static void downloadImage(String subUrl, String name, String familyName, String productId, ImageView imageView) {
+        // Used for downloading images from the server
+        // Uses existing images from the phone if present
         if (name != null && familyName != null) {
             String imageName = name + "_" + familyName + "_" + productId;
             if (ImageStorage.checkifImageExists(imageName)) {

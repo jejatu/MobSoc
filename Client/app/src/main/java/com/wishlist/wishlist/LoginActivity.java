@@ -131,6 +131,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
+        // This function is called upon pressing the login button
+        // Sends user information to the server
+        // Server gives an authentication token that this client then saves
+        // The token is then used to associate the user with the api calls
         intent = new Intent(this, MainActivity.class);
 
         EditText input_username = (EditText) findViewById(R.id.input_username);
