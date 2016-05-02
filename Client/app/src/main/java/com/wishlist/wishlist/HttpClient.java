@@ -50,7 +50,7 @@ public class HttpClient {
                 String path = file.getAbsolutePath();
                 if (path != null) {
                     Bitmap b = BitmapFactory.decodeFile(path);
-                    int width = 400;
+                    int width = 1300;
                     int height = (int)((float)width * ((float)b.getHeight() / (float)b.getWidth()));
                     imageView.setImageBitmap(Bitmap.createScaledBitmap(b, width, height, false));
                 }

@@ -50,6 +50,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             String[] permissions = new String[3];
 
             permissions[0] = Manifest.permission.INTERNET;
-            permissions[1] = Manifest.permission.ACCESS_NETWORK_STATE;
+            permissions[1] = Manifest.permission    .ACCESS_NETWORK_STATE;
             permissions[2] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
             ActivityCompat.requestPermissions(this, permissions, MY_PERMISSIONS_INT);
@@ -303,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }*/
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -327,12 +330,7 @@ public class MainActivity extends AppCompatActivity {
         return image;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -344,8 +342,13 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if (id == R.id.Logout) {
+        }else if(id==R.id.fabOpenCamera){
+            Fragment fragment= PlaceholderFragment.newInstance(2);
+           // fragment.inf
+
+
+            dispatchTakePictureIntent(findViewById(android.R.id.content));
+        } else if (id == R.id.Logout) {
             String token = AuthHelper.getAuthToken(getApplicationContext());
             HttpClient.sendPostRequest("logout", JSONHelper.createLogout(token), new HttpCallback() {
                 @Override
@@ -369,6 +372,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     /**
@@ -451,6 +460,8 @@ public class MainActivity extends AppCompatActivity {
                     public void success(JSONObject response) {
                         List<Product> productList = JSONHelper.parseProducts(response);
                         AuthHelper.saveProductCount(productList.size(), getContext());
+                        Collections.reverse(productList);
+
                         listView.setAdapter(new ProductListAdaptor(productList));
                     }
 

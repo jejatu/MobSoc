@@ -4,11 +4,7 @@
     tools:context="codeplated.shopitbaby.MainActivity">
 
 
-    <item
-        android:id="@+id/switchAccount"
-        android:orderInCategory="100"
-        android:title="@string/switchAccount"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/addMember"
         android:orderInCategory="100"
@@ -34,7 +30,7 @@
         app:showAsAction="always"
         android:backgroundTint="#ffffff"/>
     <item
-        android:id="@+id/btn_take_picture"
+        android:id="@+id/fabOpenCamera"
         android:icon="@drawable/ic_photo_camera_24dp"
         android:title="Add Picture"
         app:showAsAction="always"

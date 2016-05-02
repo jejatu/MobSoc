@@ -54,7 +54,7 @@
             android:layout_weight="1"
             android:inputType="textMultiLine"
             android:ems="10"
-            android:hint="Any details...?" />
+            android:hint="Product Description" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.v7.widget.AppCompatButton
