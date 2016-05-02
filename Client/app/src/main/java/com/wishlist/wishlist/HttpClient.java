@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class HttpClient {
+    private static final int IMAGE_WIDTH = 1300;
     // http://10.0.2.2:5000/ for emulation
     // http://masu.pythonanywhere.com/ for external
     static String serverUrl = "http://masu.pythonanywhere.com/";
@@ -50,7 +51,7 @@ public class HttpClient {
                 String path = file.getAbsolutePath();
                 if (path != null) {
                     Bitmap b = BitmapFactory.decodeFile(path);
-                    int width = 1300;
+                    int width = IMAGE_WIDTH;
                     int height = (int)((float)width * ((float)b.getHeight() / (float)b.getWidth()));
                     imageView.setImageBitmap(Bitmap.createScaledBitmap(b, width, height, false));
                 }
@@ -287,7 +288,9 @@ public class HttpClient {
         @Override
         protected void onPostExecute(Object o) {
             if (bitmap != null && !ImageStorage.checkifImageExists(imagename_)) {
-                view.setImageBitmap(bitmap);
+                int width = IMAGE_WIDTH;
+                int height = (int)((float)width * ((float)bitmap.getHeight() / (float)bitmap.getWidth()));
+                view.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, height, false));
                 ImageStorage.saveToSdCard(bitmap, imagename_);
             }
         }
